@@ -1,0 +1,302 @@
+{
+  "categories": [
+    {
+      "id": "category_01",
+      "order": 1,
+      "nama": "Nasihat dan Budi Bahasa",
+      "description": "Pantun tentang nasihat, budi bahasa, dan hubungan baik antarsesama.",
+      "level": "pemula",
+      "totalPantun": 1,
+      "isActive": true
+    },
+    {
+      "id": "category_02",
+      "order": 2,
+      "nama": "Perenungan dan Kehidupan",
+      "description": "Pantun tentang kehidupan, masa muda, dan perenungan dalam menjalani kehidupan.",
+      "level": "pemula",
+      "totalPantun": 1,
+      "isActive": true
+    },
+    {
+      "id": "category_03",
+      "order": 3,
+      "nama": "Persahabatan dan Merantau",
+      "description": "Pantun tentang persahabatan, kebersamaan, dan hubungan meskipun berada di tempat yang berbeda.",
+      "level": "pemula",
+      "totalPantun": 1,
+      "isActive": true
+    }
+  ],
+
+  "pantun": [
+    {
+      "id": "pantun_001",
+      "categoryId": "category_01",
+      "orderInCategory": 1,
+
+      "judul": "Pantun Nasihat / Budi Bahasa",
+      "kategori": "nasihat",
+      "level": "pemula",
+
+      "baris": [
+        "Anak ikan di makan ikan,",
+        "Anak tenggiri di aik laut.",
+        "Sanak ukan keluarga ukan,",
+        "Karnau budi jalanau tersangkut."
+      ],
+
+      "terjemahan": [
+        "Anak ikan dimakan ikan,",
+        "Anak tenggiri di air laut.",
+        "Keluarga bukan saudara bukan,",
+        "Karena budi bahasa kita jadi terikat."
+      ],
+
+      "polaRima": "ABAB",
+      "isActive": true,
+
+      "questions": [
+        {
+          "id": "q_001_01",
+          "lineIndex": 2,
+
+          "template": "Anak ikan di makan ikan,\nAnak tenggiri di aik laut.\nSanak ukan keluarga ____,\nKarnau budi jalanau tersangkut.",
+
+          "referenceAnswer": "ukan",
+
+          "options": [
+            "ukan",
+            "laut",
+            "ikan",
+            "budi"
+          ],
+
+          "targetRhyme": "an",
+
+          "explanation": "Kata 'ukan' melengkapi baris ketiga dan mempertahankan pola rima A-B-A-B dengan bunyi akhir -an."
+        },
+
+        {
+          "id": "q_001_02",
+          "lineIndex": 3,
+
+          "template": "Anak ikan di makan ikan,\nAnak tenggiri di aik laut.\nSanak ukan keluarga ukan,\nKarnau budi jalanau ____.",
+
+          "referenceAnswer": "tersangkut",
+
+          "options": [
+            "tersangkut",
+            "ukan",
+            "ikan",
+            "padang"
+          ],
+
+          "targetRhyme": "ut",
+
+          "explanation": "Kata 'tersangkut' sesuai dengan isi pantun dan memiliki bunyi akhir -ut yang berpasangan dengan kata 'laut'."
+        }
+      ],
+
+      "vocabulary": [
+        {
+          "id": "v_001_01",
+          "serawai": "aik",
+          "indonesia": "air",
+          "keterangan": "Kosakata Bahasa Serawai yang digunakan pada baris kedua."
+        },
+
+        {
+          "id": "v_001_02",
+          "serawai": "ukan",
+          "indonesia": "bukan",
+          "keterangan": "Kosakata Bahasa Serawai yang digunakan pada baris ketiga."
+        },
+
+        {
+          "id": "v_001_03",
+          "serawai": "karnau",
+          "indonesia": "karena",
+          "keterangan": "Kosakata Bahasa Serawai yang digunakan pada baris keempat."
+        },
+
+        {
+          "id": "v_001_04",
+          "serawai": "sanak",
+          "indonesia": "saudara atau kerabat",
+          "keterangan": "Kosakata yang berkaitan dengan hubungan kekerabatan."
+        }
+      ]
+    },
+
+    {
+      "id": "pantun_002",
+      "categoryId": "category_02",
+      "orderInCategory": 1,
+
+      "judul": "Pantun Perenungan / Kehidupan",
+      "kategori": "kehidupan",
+      "level": "pemula",
+
+      "baris": [
+        "Kayu balam di tengah padang,",
+        "Rimbun daun tempat bepaut.",
+        "Masa muda jangan dibuang,",
+        "Bila tuo menyesal surut."
+      ],
+
+      "terjemahan": [
+        "Kayu balam di tengah padang,",
+        "Rimbun daun tempat bergantung.",
+        "Masa muda jangan disia-siakan,",
+        "Kalau sudah tua barulah menyesal."
+      ],
+
+      "polaRima": "ABAB",
+      "isActive": true,
+
+      "questions": [
+        {
+          "id": "q_002_01",
+          "lineIndex": 2,
+
+          "template": "Kayu balam di tengah padang,\nRimbun daun tempat bepaut.\nMasa muda jangan ____,\nBila tuo menyesal surut.",
+
+          "referenceAnswer": "dibuang",
+
+          "options": [
+            "dibuang",
+            "bepaut",
+            "surut",
+            "tuo"
+          ],
+
+          "targetRhyme": "ang",
+
+          "explanation": "Kata 'dibuang' sesuai dengan makna nasihat agar masa muda tidak disia-siakan dan mempertahankan bunyi akhir -ang."
+        },
+
+        {
+          "id": "q_002_02",
+          "lineIndex": 3,
+
+          "template": "Kayu balam di tengah padang,\nRimbun daun tempat bepaut.\nMasa muda jangan dibuang,\nBila tuo menyesal ____.",
+
+          "referenceAnswer": "surut",
+
+          "options": [
+            "surut",
+            "padang",
+            "dibuang",
+            "balam"
+          ],
+
+          "targetRhyme": "ut",
+
+          "explanation": "Kata 'surut' melengkapi baris keempat dan memiliki bunyi akhir -ut yang berpasangan dengan kata 'bepaut'."
+        }
+      ],
+
+      "vocabulary": [
+        {
+          "id": "v_002_01",
+          "serawai": "bepaut",
+          "indonesia": "bergantung atau berpaut",
+          "keterangan": "Kosakata yang digunakan pada baris kedua pantun."
+        },
+
+        {
+          "id": "v_002_02",
+          "serawai": "tuo",
+          "indonesia": "tua",
+          "keterangan": "Kosakata Bahasa Serawai untuk kata tua."
+        }
+      ]
+    },
+
+    {
+      "id": "pantun_003",
+      "categoryId": "category_03",
+      "orderInCategory": 1,
+
+      "judul": "Pantun Persahabatan / Merantau",
+      "kategori": "persahabatan",
+      "level": "pemula",
+
+      "baris": [
+        "Buah durian masak di dahan,",
+        "Jatuh sebutir di dekat sumur.",
+        "Kito berjalan berlainan badan,",
+        "Asal hati tetep sepekan umur."
+      ],
+
+      "terjemahan": [
+        "Buah durian masak di dahan,",
+        "Jatuh sebutir di dekat sumur.",
+        "Kita berjalan terpisah badan,",
+        "Asalkan hati tetap sejalan dan akur."
+      ],
+
+      "polaRima": "ABAB",
+      "isActive": true,
+
+      "questions": [
+        {
+          "id": "q_003_01",
+          "lineIndex": 2,
+
+          "template": "Buah durian masak di dahan,\nJatuh sebutir di dekat sumur.\nKito berjalan berlainan ____,\nAsal hati tetep sepekan umur.",
+
+          "referenceAnswer": "badan",
+
+          "options": [
+            "badan",
+            "sumur",
+            "umur",
+            "tetep"
+          ],
+
+          "targetRhyme": "an",
+
+          "explanation": "Kata 'badan' sesuai dengan konteks perpisahan secara fisik dan memiliki rima -an yang berpasangan dengan kata 'dahan'."
+        },
+
+        {
+          "id": "q_003_02",
+          "lineIndex": 3,
+
+          "template": "Buah durian masak di dahan,\nJatuh sebutir di dekat sumur.\nKito berjalan berlainan badan,\nAsal hati tetep sepekan ____.",
+
+          "referenceAnswer": "umur",
+
+          "options": [
+            "umur",
+            "dahan",
+            "badan",
+            "durian"
+          ],
+
+          "targetRhyme": "ur",
+
+          "explanation": "Kata 'umur' melengkapi baris keempat dan menghasilkan bunyi akhir -ur yang berpasangan dengan kata 'sumur'."
+        }
+      ],
+
+      "vocabulary": [
+        {
+          "id": "v_003_01",
+          "serawai": "kito",
+          "indonesia": "kita",
+          "keterangan": "Kosakata Bahasa Serawai untuk kata kita."
+        },
+
+        {
+          "id": "v_003_02",
+          "serawai": "tetep",
+          "indonesia": "tetap",
+          "keterangan": "Kosakata yang digunakan pada baris keempat pantun."
+        }
+      ]
+    }
+  ]
+}

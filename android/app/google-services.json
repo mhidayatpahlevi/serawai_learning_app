@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1039119672171",
+    "project_id": "daftartugas-e46e9",
+    "storage_bucket": "daftartugas-e46e9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039119672171:android:88479e2404650f3923222e",
+        "android_client_info": {
+          "package_name": "com.example.daftartugas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA22aaEQsxCixemEmTLtGaBFOYkTRNA8qU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039119672171:android:154b76f4a9158b8b23222e",
+        "android_client_info": {
+          "package_name": "com.example.serawai_learning_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA22aaEQsxCixemEmTLtGaBFOYkTRNA8qU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
