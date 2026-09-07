@@ -13,8 +13,11 @@ class RegisterView extends GetView<AuthController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Daftar Akun',
-        style:GoogleFonts.poppins()
+        style:GoogleFonts.poppins(
+          fontWeight: FontWeight.w600
+        )
         ),
       ),
       body: SafeArea(
@@ -115,6 +118,11 @@ class RegisterView extends GetView<AuthController> {
                           controller.isLoading.value
                               ? null
                               : controller.register,
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black
+
+                      ),
                       child:
                           controller.isLoading.value
                               ? const SizedBox(
@@ -124,7 +132,14 @@ class RegisterView extends GetView<AuthController> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text('Daftar'),
+                              : Text('Daftar',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                color: Colors.white
+                              ),
+                              
+                              ),
                     ),
                   ),
                 ),
