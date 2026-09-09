@@ -13,16 +13,22 @@ class SplashController extends GetxController {
   }
 
   Future<void> checkAuthentication() async {
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
+    try {
+      await Future.delayed(const Duration(seconds: 2));
 
-    final user = await _authService.authStateChanges.first;
+      final user = await _authService.authStateChanges.first;
 
-    if (user != null) {
-      Get.offAllNamed(Routes.home);
-    } else {
-      Get.offAllNamed(Routes.login);
+      if (isClosed) return;
+
+      if (user != null) {
+        Get.offAllNamed(Routes.home);
+      } else {
+        Get.offAllNamed(Routes.login);
+      }
+    } catch (error) {
+      if (!isClosed) {
+        Get.offAllNamed(Routes.login);
+      }
     }
   }
 }

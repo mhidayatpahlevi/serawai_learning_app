@@ -20,6 +20,11 @@ class AuthController extends GetxController {
   final registerEmailController = TextEditingController();
   final registerPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  
+  final obscureRegisterPassword = true.obs;
+  final obscureConfirmPassword = true.obs;
+  final obscurePassword = true.obs;
+  
 
   final isLoading = false.obs;
 
@@ -170,6 +175,17 @@ class AuthController extends GetxController {
         return 'Terjadi kesalahan autentikasi.';
     }
   }
+  void togglePasswordVisibility() {
+  obscurePassword.toggle();
+}
+
+void toggleRegisterPasswordVisibility() {
+  obscureRegisterPassword.toggle();
+}
+
+void toggleConfirmPasswordVisibility() {
+  obscureConfirmPassword.toggle();
+}
 
   @override
   void onClose() {
@@ -183,4 +199,5 @@ class AuthController extends GetxController {
 
     super.onClose();
   }
+
 }
