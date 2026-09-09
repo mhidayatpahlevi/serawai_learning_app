@@ -304,44 +304,44 @@ class LoginView extends GetView<AuthController> {
   }
 }
 
-class _SocialLoginButton extends StatelessWidget {
-  const _SocialLoginButton({
-    this.icon,
-    this.label,
-    required this.color,
-    required this.onPressed,
-  });
+// class _SocialLoginButton extends StatelessWidget {
+//   const _SocialLoginButton({
+//     this.icon,
+//     this.label,
+//     required this.color,
+//     required this.onPressed,
+//   });
 
-  final IconData? icon;
-  final String? label;
-  final Color color;
-  final VoidCallback onPressed;
+//   final IconData? icon;
+//   final String? label;
+//   final Color color;
+//   final VoidCallback onPressed;
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 64,
-      height: 48,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          side: const BorderSide(color: Color(0xFFE1E6EA)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: icon != null
-            ? Icon(icon, size: 25, color: color)
-            : Text(
-                label ?? '',
-                style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: color,
-                ),
-              ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       width: 64,
+//       height: 48,
+//       child: OutlinedButton(
+//         onPressed: onPressed,
+//         style: OutlinedButton.styleFrom(
+//           padding: EdgeInsets.zero,
+//           side: const BorderSide(color: Color(0xFFE1E6EA)),
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(12),
+//           ),
+//         ),
+//         child: icon != null
+//             ? Icon(icon, size: 25, color: color)
+//             : Text(
+//                 label ?? '',
+//                 style: GoogleFonts.poppins(
+//                   fontSize: 22,
+//                   fontWeight: FontWeight.w700,
+//                   color: color,
+//                 ),
+//               ),
+//       ),
+//     );
+//   }
+// }
