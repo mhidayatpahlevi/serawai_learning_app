@@ -1040,16 +1040,16 @@ class KategoriView extends GetView<KategoriController> {
       case 'nasihat':
         return 'assets/images/kategori/daunicon.png';
 
-      case 'cinta':
+      case 'agama':
         return 'assets/images/kategori/hearthicon.png';
 
-      case 'alam':
+      case 'teka-teki':
         return 'assets/images/kategori/mountainicon.png';
 
-      case 'budaya':
+      case 'jenaka':
         return 'assets/images/kategori/rumahicon.png';
 
-      case 'sosial':
+      case 'kiasan':
         return 'assets/images/kategori/socialicon.png';
 
       default:
@@ -1075,7 +1075,7 @@ class KategoriView extends GetView<KategoriController> {
           buttonColor: Color(0xFFDDF4D7),
         );
 
-      case 'cinta':
+      case 'agama':
         return const _CategoryTheme(
           color: Color(0xFFF0657D),
           backgroundColor: Color(0xFFFFF0F2),
@@ -1084,7 +1084,7 @@ class KategoriView extends GetView<KategoriController> {
           buttonColor: Color(0xFFFFDDE4),
         );
 
-      case 'alam':
+      case 'teka-teki':
         return const _CategoryTheme(
           color: Color(0xFF5193C1),
           backgroundColor: Color(0xFFEDF7FF),
@@ -1093,7 +1093,7 @@ class KategoriView extends GetView<KategoriController> {
           buttonColor: Color(0xFFDCEAF5),
         );
 
-      case 'budaya':
+      case 'jenaka':
         return const _CategoryTheme(
           color: Color(0xFFE29536),
           backgroundColor: Color(0xFFFFF6E6),
@@ -1102,7 +1102,7 @@ class KategoriView extends GetView<KategoriController> {
           buttonColor: Color(0xFFFFE8C0),
         );
 
-      case 'sosial':
+      case 'kiasan':
         return const _CategoryTheme(
           color: Color(0xFF8264D0),
           backgroundColor: Color(0xFFF5F1FF),

@@ -70,6 +70,7 @@ flutter:
     - assets/images/login.png
     - assets/images/register.png
     - assets/images/cardhome.png
+    - assets/images/daunicon.png
     - assets/images/kategori/
   #   - images/a_dot_ham.jpeg
 
