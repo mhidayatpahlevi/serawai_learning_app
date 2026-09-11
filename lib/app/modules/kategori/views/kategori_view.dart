@@ -15,13 +15,13 @@ class KategoriView extends GetView<KategoriController> {
   // ============================================================
 
   static const Color primaryColor = Color(0xFF2F9C95);
-  static const Color darkColor = Color(0xFF17233F);
-  static const Color secondaryText = Color(0xFF718096);
+  static const Color darkColor = Color(0xFF13213D);
+  static const Color secondaryText = Color(0xFF73809A);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4FAF7),
+      backgroundColor: const Color(0xFFF9FCFC),
 
       body: Obx(
         () {
@@ -42,7 +42,7 @@ class KategoriView extends GetView<KategoriController> {
           // ====================================================
 
           if (controller.errorMessage.value.isNotEmpty) {
-            return _buildErrorState();
+            return _buildError();
           }
 
           // ====================================================
@@ -50,47 +50,72 @@ class KategoriView extends GetView<KategoriController> {
           // ====================================================
 
           if (controller.categories.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmpty();
           }
-
-          // ====================================================
-          // CONTENT
-          // ====================================================
 
           return RefreshIndicator(
             color: primaryColor,
             onRefresh: controller.loadData,
 
-            child: CustomScrollView(
+            child: ListView(
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics(),
               ),
 
-              slivers: [
-                // ==============================================
-                // HEADER + BANNER
-                // ==============================================
+              padding: EdgeInsets.zero,
 
-                SliverToBoxAdapter(
-                  child: _buildHeader(
-                    context,
+              children: [
+                // =================================================
+                // HEADER + BANNER + LEVEL
+                // =================================================
+
+                _buildTopSection(context),
+
+                // =================================================
+                // CONTENT
+                // =================================================
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    16,
+                    8,
+                    16,
+                    30,
                   ),
-                ),
 
-                // ==============================================
-                // LEVEL
-                // ==============================================
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
-                SliverToBoxAdapter(
-                  child: _buildLevelInfo(),
-                ),
+                    children: [
+                      // =============================================
+                      // URUTAN BELAJAR
+                      // =============================================
 
-                // ==============================================
-                // LEARNING PATH
-                // ==============================================
+                      _buildSectionHeader(),
 
-                SliverToBoxAdapter(
-                  child: _buildLearningPath(),
+                      const SizedBox(height: 14),
+
+                      // =============================================
+                      // CATEGORY LIST
+                      // =============================================
+
+                      ...controller.categories.map(
+                        (category) {
+                          return _buildCategoryCard(
+                            category,
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // =============================================
+                      // FOOTER QUOTE
+                      // =============================================
+
+                      _buildFooter(),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -101,55 +126,83 @@ class KategoriView extends GetView<KategoriController> {
   }
 
   // ============================================================
-  // HEADER
+  // TOP SECTION
   // ============================================================
 
-  Widget _buildHeader(
+  Widget _buildTopSection(
     BuildContext context,
   ) {
     final double statusBar =
         MediaQuery.of(context).padding.top;
 
-    return Container(
-      width: double.infinity,
+    const double appBarHeight = 64;
+    const double bannerHeight = 190;
+    const double levelHeight = 115;
 
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFBEEAF8),
-            Color(0xFFDDF7F1),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+    final double headerHeight =
+        statusBar + appBarHeight;
 
-      child: Column(
+    final double totalHeight =
+        headerHeight +
+        bannerHeight +
+        levelHeight -
+        30;
+
+    return SizedBox(
+      height: totalHeight,
+
+      child: Stack(
+        clipBehavior: Clip.none,
+
         children: [
           // ====================================================
-          // APPBAR MANUAL
+          // BACKGROUND HEADER
           // ====================================================
 
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              12,
-              statusBar + 5,
-              12,
-              8,
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+
+            height: headerHeight + bannerHeight,
+
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFE7F9FC),
+                    Color(0xFFDFF6F2),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
             ),
+          ),
+
+          // ====================================================
+          // APPBAR
+          // ====================================================
+
+          Positioned(
+            top: statusBar + 4,
+            left: 10,
+            right: 10,
+
+            height: 58,
 
             child: Row(
               children: [
                 SizedBox(
-                  width: 44,
-                  height: 44,
+                  width: 45,
+                  height: 45,
 
                   child: Material(
                     color: Colors.transparent,
 
                     child: InkWell(
                       borderRadius: BorderRadius.circular(
-                        30,
+                        50,
                       ),
 
                       onTap: () {
@@ -159,7 +212,7 @@ class KategoriView extends GetView<KategoriController> {
                       child: const Icon(
                         Icons.arrow_back_rounded,
                         color: darkColor,
-                        size: 27,
+                        size: 28,
                       ),
                     ),
                   ),
@@ -167,15 +220,15 @@ class KategoriView extends GetView<KategoriController> {
 
                 Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+
                     children: [
                       Text(
                         'Kategori Pantun',
 
-                        textAlign: TextAlign.center,
-
                         style: GoogleFonts.poppins(
+                          fontSize: 21,
                           color: darkColor,
-                          fontSize: 20,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -183,55 +236,77 @@ class KategoriView extends GetView<KategoriController> {
                       const SizedBox(height: 1),
 
                       Text(
-                        'Jelajahi perjalanan belajarmu',
-
-                        textAlign: TextAlign.center,
+                        'Pilih kategori untuk memulai belajar',
 
                         style: GoogleFonts.poppins(
+                          fontSize: 11,
                           color: secondaryText,
-                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                // supaya judul benar-benar center
+                // Agar judul tetap center
                 const SizedBox(
-                  width: 44,
+                  width: 45,
                 ),
               ],
             ),
           ),
 
           // ====================================================
-          // BANNER FULL WIDTH
+          // BANNER
           // ====================================================
 
-          SizedBox(
-            width: double.infinity,
+          Positioned(
+            top: headerHeight,
+            left: 0,
+            right: 0,
 
-            child: AspectRatio(
-              aspectRatio: 16 / 8.5,
+            height: bannerHeight,
 
-              child: Image.asset(
-                'assets/images/kategori/banner.png',
+            child: Image.asset(
+              'assets/images/kategori/banner.png',
 
-                width: double.infinity,
+              fit: BoxFit.cover,
 
-                fit: BoxFit.cover,
+              alignment: Alignment.center,
 
-                alignment: Alignment.center,
+              errorBuilder: (
+                context,
+                error,
+                stackTrace,
+              ) {
+                return Container(
+                  color: const Color(0xFFE3F7F2),
 
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) {
-                  return _buildBannerFallback();
-                },
-              ),
+                  alignment: Alignment.center,
+
+                  child: const Icon(
+                    Icons.auto_stories_rounded,
+                    color: primaryColor,
+                    size: 80,
+                  ),
+                );
+              },
             ),
+          ),
+
+          // ====================================================
+          // LEVEL CARD OVERLAP
+          // ====================================================
+
+          Positioned(
+            top:
+                headerHeight +
+                bannerHeight -
+                32,
+
+            left: 16,
+            right: 16,
+
+            child: _buildLevelCard(),
           ),
         ],
       ),
@@ -239,99 +314,63 @@ class KategoriView extends GetView<KategoriController> {
   }
 
   // ============================================================
-  // BANNER FALLBACK
+  // LEVEL CARD
   // ============================================================
 
-  Widget _buildBannerFallback() {
-    return Container(
-      width: double.infinity,
-
-      decoration: const BoxDecoration(
-        color: Color(0xFFDDF6EE),
-      ),
-
-      padding: const EdgeInsets.all(
-        22,
-      ),
-
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '“Setiap pantun\n'
-              'menyimpan pelajaran\n'
-              'untuk kehidupan”',
-
-              style: GoogleFonts.poppins(
-                color: darkColor,
-                fontSize: 16,
-                height: 1.45,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-
-          const Icon(
-            Icons.auto_stories_rounded,
-            size: 70,
-            color: primaryColor,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // LEVEL INFO
-  // ============================================================
-
-  Widget _buildLevelInfo() {
-    final int totalCategory =
+  Widget _buildLevelCard() {
+    final int total =
         controller.categories.length;
 
     final int unlocked =
         controller.highestUnlockedCategory.value
             .clamp(
               0,
-              totalCategory,
+              total,
             )
             .toInt();
 
     final double progress =
-        totalCategory == 0
-            ? 0.0
-            : unlocked / totalCategory;
+        total == 0
+            ? 0
+            : unlocked / total;
 
     return Container(
-      // jarak kecil agar dekat dengan banner
-      margin: const EdgeInsets.fromLTRB(
-        16,
-        6,
-        16,
-        10,
+      constraints: const BoxConstraints(
+        minHeight: 112,
       ),
 
       padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 14,
+        horizontal: 16,
+        vertical: 15,
       ),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(
+          0.96,
+        ),
 
         borderRadius: BorderRadius.circular(
-          22,
+          28,
+        ),
+
+        border: Border.all(
+          color: Colors.white,
+          width: 2,
         ),
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.07,
+            color: const Color(
+              0xFF83BDB8,
+            ).withOpacity(
+              0.15,
             ),
-            blurRadius: 14,
+
+            blurRadius: 20,
+
             offset: const Offset(
               0,
-              5,
+              8,
             ),
           ),
         ],
@@ -340,35 +379,56 @@ class KategoriView extends GetView<KategoriController> {
       child: Row(
         children: [
           // ====================================================
-          // BADGE
+          // MEDAL
           // ====================================================
 
           Container(
-            width: 58,
-            height: 58,
+            width: 74,
+            height: 74,
 
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFE7A5),
-              shape: BoxShape.circle,
+            decoration: BoxDecoration(
+              color: const Color(
+                0xFFE5F8F5,
+              ),
+
+              borderRadius: BorderRadius.circular(
+                24,
+              ),
             ),
 
-            child: const Icon(
-              Icons.workspace_premium_rounded,
-              size: 33,
-              color: Color(0xFFF2A126),
+            child: Center(
+              child: Container(
+                width: 52,
+                height: 52,
+
+                decoration: const BoxDecoration(
+                  color: Color(
+                    0xFFFFD769,
+                  ),
+
+                  shape: BoxShape.circle,
+                ),
+
+                child: const Icon(
+                  Icons.workspace_premium_rounded,
+                  size: 34,
+                  color: Color(
+                    0xFFF4A72C,
+                  ),
+                ),
+              ),
             ),
           ),
 
-          const SizedBox(width: 13),
+          const SizedBox(width: 15),
 
           // ====================================================
-          // LEVEL TEXT
+          // LEVEL INFORMATION
           // ====================================================
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 Text(
@@ -376,11 +436,10 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: secondaryText,
-                    fontSize: 10,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-
-                const SizedBox(height: 2),
 
                 Text(
                   controller.userLevel.value
@@ -393,27 +452,79 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: darkColor,
-                    fontSize: 18,
-                    fontWeight:
-                        FontWeight.w800,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
 
-                const SizedBox(height: 7),
+                const SizedBox(height: 2),
+
+                Text(
+                  'Kategori terbuka sampai $unlocked',
+
+                  maxLines: 1,
+
+                  overflow:
+                      TextOverflow.ellipsis,
+
+                  style: GoogleFonts.poppins(
+                    color: const Color(
+                      0xFF586A88,
+                    ),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          // ====================================================
+          // PROGRESS
+          // ====================================================
+
+          SizedBox(
+            width: 95,
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+
+              children: [
+                Text(
+                  '$unlocked/$total',
+
+                  style: GoogleFonts.poppins(
+                    color: darkColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+
+                Text(
+                  'Kategori',
+
+                  style: GoogleFonts.poppins(
+                    color: secondaryText,
+                    fontSize: 10,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
 
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(
+                  borderRadius: BorderRadius.circular(
                     20,
                   ),
 
                   child: LinearProgressIndicator(
                     value: progress,
-                    minHeight: 6,
+
+                    minHeight: 8,
 
                     backgroundColor:
                         const Color(
-                      0xFFDCEDEA,
+                      0xFFD9ECEB,
                     ),
 
                     valueColor:
@@ -426,439 +537,71 @@ class KategoriView extends GetView<KategoriController> {
               ],
             ),
           ),
-
-          const SizedBox(width: 16),
-
-          // ====================================================
-          // COUNTER
-          // ====================================================
-
-          Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.end,
-
-            children: [
-              Text(
-                '$unlocked/$totalCategory',
-
-                style: GoogleFonts.poppins(
-                  color: darkColor,
-                  fontSize: 18,
-                  fontWeight:
-                      FontWeight.w800,
-                ),
-              ),
-
-              Text(
-                'Terbuka',
-
-                style: GoogleFonts.poppins(
-                  color: secondaryText,
-                  fontSize: 9,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 
   // ============================================================
-  // LEARNING PATH
+  // SECTION HEADER
   // ============================================================
 
-  Widget _buildLearningPath() {
-    final List<CategoryModel> categories =
-        controller.categories;
-
-    return Stack(
+  Widget _buildSectionHeader() {
+    return Row(
       children: [
-        // ======================================================
-        // BACKGROUND IMAGE
-        // ======================================================
+        Expanded(
+          child: Text(
+            'Urutan Belajar',
 
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/kategori/learning_path_bg.png',
-
-            fit: BoxFit.fill,
-
-            alignment: Alignment.topCenter,
-
-            errorBuilder: (
-              context,
-              error,
-              stackTrace,
-            ) {
-              return Container(
-                color: const Color(
-                  0xFFC8E7A4,
-                ),
-              );
-            },
-          ),
-        ),
-
-        // ======================================================
-        // OVERLAY TIPIS
-        // ======================================================
-
-        Positioned.fill(
-          child: IgnorePointer(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(
-                      0.02,
-                    ),
-                    Colors.white.withOpacity(
-                      0.01,
-                    ),
-                    const Color(
-                      0xFFEAF7D8,
-                    ).withOpacity(
-                      0.05,
-                    ),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
+            style: GoogleFonts.poppins(
+              color: darkColor,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
 
-        // ======================================================
-        // CONTENT
-        // ======================================================
-
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            14,
-            25,
-            14,
-            28,
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 13,
+            vertical: 8,
           ),
 
-          child: Column(
+          decoration: BoxDecoration(
+            color: const Color(
+              0xFFE1F7F4,
+            ),
+
+            borderRadius: BorderRadius.circular(
+              30,
+            ),
+          ),
+
+          child: Row(
             children: [
-              // =================================================
-              // TITLE
-              // =================================================
-
-              Container(
-                width: double.infinity,
-
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(
-                    0.87,
-                  ),
-
-                  borderRadius:
-                      BorderRadius.circular(
-                    20,
-                  ),
-
-                  border: Border.all(
-                    color: Colors.white.withOpacity(
-                      0.7,
-                    ),
-                  ),
-
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(
-                        0.05,
-                      ),
-                      blurRadius: 10,
-                      offset: const Offset(
-                        0,
-                        4,
-                      ),
-                    ),
-                  ],
-                ),
-
-                child: Column(
-                  children: [
-                    Text(
-                      'Mulai Perjalanan Belajarmu',
-
-                      textAlign: TextAlign.center,
-
-                      style: GoogleFonts.poppins(
-                        color: darkColor,
-                        fontSize: 16,
-                        fontWeight:
-                            FontWeight.w800,
-                      ),
-                    ),
-
-                    const SizedBox(height: 3),
-
-                    Text(
-                      'Selesaikan setiap kategori untuk '
-                      'membuka perjalanan berikutnya',
-
-                      textAlign: TextAlign.center,
-
-                      style: GoogleFonts.poppins(
-                        color: secondaryText,
-                        fontSize: 10,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
+              const Icon(
+                Icons.menu_book_rounded,
+                color: primaryColor,
+                size: 18,
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(width: 5),
 
-              // =================================================
-              // CATEGORY PATH
-              // =================================================
+              Text(
+                'Lihat Panduan',
 
-              ...List.generate(
-                categories.length,
-                (index) {
-                  return _buildPathItem(
-                    category:
-                        categories[index],
-                    index: index,
-                  );
-                },
+                style: GoogleFonts.poppins(
+                  color: const Color(
+                    0xFF187E77,
+                  ),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-
-              const SizedBox(height: 20),
-
-              // =================================================
-              // QUOTE
-              // =================================================
-
-              _buildQuote(),
-
-              const SizedBox(height: 8),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  // ============================================================
-  // PATH ITEM
-  // ============================================================
-
-  Widget _buildPathItem({
-    required CategoryModel category,
-    required int index,
-  }) {
-    final bool unlocked =
-        controller.isUnlocked(
-      category,
-    );
-
-    final bool isLeft =
-        index.isEven;
-
-    final Color color =
-        _getCategoryColor(
-      category.nama,
-    );
-
-    return SizedBox(
-      height: 150,
-
-      child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.center,
-
-        children:
-            isLeft
-
-                // =================================================
-                // POSISI KIRI
-                // =================================================
-
-                ? [
-                    _buildNumberNode(
-                      category,
-                      unlocked,
-                      color,
-                    ),
-
-                    const SizedBox(
-                      width: 7,
-                    ),
-
-                    Expanded(
-                      child:
-                          _buildCategoryCard(
-                        category,
-                        unlocked,
-                        color,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      width: 28,
-                    ),
-                  ]
-
-                // =================================================
-                // POSISI KANAN
-                // =================================================
-
-                : [
-                    const SizedBox(
-                      width: 28,
-                    ),
-
-                    Expanded(
-                      child:
-                          _buildCategoryCard(
-                        category,
-                        unlocked,
-                        color,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      width: 7,
-                    ),
-
-                    _buildNumberNode(
-                      category,
-                      unlocked,
-                      color,
-                    ),
-                  ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // NUMBER NODE
-  // ============================================================
-
-  Widget _buildNumberNode(
-    CategoryModel category,
-    bool unlocked,
-    Color color,
-  ) {
-    return SizedBox(
-      width: 68,
-      height: 88,
-
-      child: Stack(
-        alignment: Alignment.topCenter,
-        clipBehavior: Clip.none,
-
-        children: [
-          // ====================================================
-          // NUMBER
-          // ====================================================
-
-          Container(
-            width: 65,
-            height: 65,
-
-            alignment: Alignment.center,
-
-            decoration: BoxDecoration(
-              color: unlocked
-                  ? color
-                  : const Color(
-                      0xFF8999A5,
-                    ),
-
-              shape: BoxShape.circle,
-
-              border: Border.all(
-                color: Colors.white,
-                width: 5,
-              ),
-
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(
-                    0.15,
-                  ),
-                  blurRadius: 8,
-                  offset: const Offset(
-                    0,
-                    4,
-                  ),
-                ),
-              ],
-            ),
-
-            child: Text(
-              '${category.order}',
-
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight:
-                    FontWeight.w800,
-              ),
-            ),
-          ),
-
-          // ====================================================
-          // LOCK / CHECK KECIL
-          // ====================================================
-
-          Positioned(
-            top: 57,
-
-            child: Container(
-              width: 25,
-              height: 25,
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-
-                shape: BoxShape.circle,
-
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(
-                      0.08,
-                    ),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-
-              child: Icon(
-                unlocked
-                    ? Icons.check_rounded
-                    : Icons.lock_rounded,
-
-                size: 15,
-
-                color: unlocked
-                    ? color
-                    : const Color(
-                        0xFF939EA8,
-                      ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -868,120 +611,153 @@ class KategoriView extends GetView<KategoriController> {
 
   Widget _buildCategoryCard(
     CategoryModel category,
-    bool unlocked,
-    Color color,
   ) {
-    return Material(
-      color: Colors.transparent,
+    final bool unlocked =
+        controller.isUnlocked(
+      category,
+    );
 
-      child: InkWell(
+    final _CategoryTheme theme =
+        _getTheme(
+      category.nama,
+    );
+
+    return Container(
+      margin: const EdgeInsets.only(
+        bottom: 12,
+      ),
+
+      child: Material(
+        color: Colors.transparent,
+
         borderRadius: BorderRadius.circular(
-          19,
+          22,
         ),
 
-        onTap: () {
-          controller.openCategory(
-            category,
-          );
-        },
-
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: 88,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(
+            22,
           ),
 
+          onTap: () {
+            controller.openCategory(
+              category,
+            );
+          },
+
           child: Ink(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 11,
+            padding: const EdgeInsets.all(
+              13,
             ),
 
             decoration: BoxDecoration(
-              // sedikit transparan supaya background terlihat
               color: unlocked
-                  ? Colors.white.withOpacity(
-                      0.91,
-                    )
-                  : const Color(
-                      0xFFE4E8EA,
-                    ).withOpacity(
-                      0.89,
+                  ? theme.backgroundColor
+                  : theme.backgroundColor.withOpacity(
+                      0.62,
                     ),
 
-              borderRadius:
-                  BorderRadius.circular(
-                19,
+              borderRadius: BorderRadius.circular(
+                22,
               ),
-
-              border: Border.all(
-                color: Colors.white.withOpacity(
-                  0.7,
-                ),
-              ),
-
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(
-                    0.09,
-                  ),
-                  blurRadius: 12,
-                  offset: const Offset(
-                    0,
-                    5,
-                  ),
-                ),
-              ],
             ),
 
             child: Row(
               children: [
-                // ===============================================
-                // CATEGORY IMAGE
-                // ===============================================
+                // =================================================
+                // ICON + NUMBER
+                // =================================================
 
-                Container(
-                  width: 52,
-                  height: 52,
+                Stack(
+                  clipBehavior: Clip.none,
 
-                  padding:
-                      const EdgeInsets.all(
-                    5,
-                  ),
+                  children: [
+                    Container(
+                      width: 88,
+                      height: 88,
 
-                  decoration:
-                      BoxDecoration(
-                    color: unlocked
-                        ? color.withOpacity(
-                            0.11,
-                          )
-                        : const Color(
-                            0xFFF1F3F4,
-                          ),
+                      padding: const EdgeInsets.all(
+                        15,
+                      ),
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      14,
+                      decoration: BoxDecoration(
+                        color:
+                            theme.iconBackground,
+
+                        borderRadius:
+                            BorderRadius.circular(
+                          20,
+                        ),
+                      ),
+
+                      child: Opacity(
+                        opacity: unlocked
+                            ? 1
+                            : 0.60,
+
+                        child:
+                            _buildCategoryImage(
+                          category.nama,
+                        ),
+                      ),
                     ),
-                  ),
 
-                  child:
-                      _buildCategoryImage(
-                    category.nama,
-                    unlocked,
-                  ),
+                    Positioned(
+                      top: -5,
+                      left: -5,
+
+                      child: Container(
+                        width: 38,
+                        height: 38,
+
+                        alignment:
+                            Alignment.center,
+
+                        decoration:
+                            BoxDecoration(
+                          color: unlocked
+                              ? theme.color
+                              : theme.color
+                                  .withOpacity(
+                                  0.72,
+                                ),
+
+                          shape:
+                              BoxShape.circle,
+
+                          border:
+                              Border.all(
+                            color:
+                                Colors.white,
+                            width: 2,
+                          ),
+                        ),
+
+                        child: Text(
+                          '${category.order}',
+
+                          style:
+                              GoogleFonts.poppins(
+                            color:
+                                Colors.white,
+                            fontSize: 15,
+                            fontWeight:
+                                FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(width: 10),
+                const SizedBox(width: 15),
 
-                // ===============================================
+                // =================================================
                 // INFORMATION
-                // ===============================================
+                // =================================================
 
                 Expanded(
                   child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min,
-
                     crossAxisAlignment:
                         CrossAxisAlignment.start,
 
@@ -994,124 +770,176 @@ class KategoriView extends GetView<KategoriController> {
                         overflow:
                             TextOverflow.ellipsis,
 
-                        style:
-                            GoogleFonts.poppins(
-                          color: unlocked
-                              ? darkColor
-                              : const Color(
-                                  0xFF89949F,
-                                ),
-
-                          fontSize: 14,
-
+                        style: GoogleFonts.poppins(
+                          color: darkColor,
+                          fontSize: 17,
                           fontWeight:
                               FontWeight.w800,
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 2,
-                      ),
-
-                      Text(
-                        '${category.totalPantun} pantun',
-
-                        maxLines: 1,
-
-                        overflow:
-                            TextOverflow.ellipsis,
-
-                        style:
-                            GoogleFonts.poppins(
-                          color: unlocked
-                              ? secondaryText
-                              : const Color(
-                                  0xFFA3AAB1,
-                                ),
-
-                          fontSize: 9,
-                        ),
-                      ),
-
                       if (category
-                          .level
+                          .description
+                          .trim()
                           .isNotEmpty) ...[
                         const SizedBox(
-                          height: 4,
+                          height: 2,
                         ),
 
-                        Container(
-                          padding:
-                              const EdgeInsets
-                                  .symmetric(
-                            horizontal: 7,
-                            vertical: 3,
-                          ),
+                        Text(
+                          category.description,
 
-                          decoration:
-                              BoxDecoration(
-                            color: unlocked
-                                ? color.withOpacity(
-                                    0.11,
-                                  )
-                                : const Color(
-                                    0xFFD7DCE0,
-                                  ),
+                          maxLines: 2,
 
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              20,
-                            ),
-                          ),
+                          overflow:
+                              TextOverflow.ellipsis,
 
-                          child: Text(
-                            'Level ${_capitalize(category.level)}',
-
-                            maxLines: 1,
-
-                            overflow:
-                                TextOverflow.ellipsis,
-
-                            style:
-                                GoogleFonts.poppins(
-                              color: unlocked
-                                  ? color
-                                  : const Color(
-                                      0xFF969EA6,
-                                    ),
-
-                              fontSize: 8,
-
-                              fontWeight:
-                                  FontWeight.w600,
-                            ),
+                          style:
+                              GoogleFonts.poppins(
+                            color:
+                                secondaryText,
+                            fontSize: 11,
+                            height: 1.35,
                           ),
                         ),
                       ],
+
+                      const SizedBox(height: 8),
+
+                      // =============================================
+                      // BOTTOM INFORMATION
+                      // =============================================
+
+                      Wrap(
+                        spacing: 9,
+                        runSpacing: 6,
+
+                        crossAxisAlignment:
+                            WrapCrossAlignment.center,
+
+                        children: [
+                          // Level indicator
+                          Row(
+                            mainAxisSize:
+                                MainAxisSize.min,
+
+                            children: [
+                              _buildLevelBars(
+                                theme.color,
+                              ),
+
+                              const SizedBox(
+                                width: 5,
+                              ),
+
+                              Container(
+                                padding:
+                                    const EdgeInsets
+                                        .symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+
+                                decoration:
+                                    BoxDecoration(
+                                  color:
+                                      theme.chipColor,
+
+                                  borderRadius:
+                                      BorderRadius
+                                          .circular(
+                                    20,
+                                  ),
+                                ),
+
+                                child: Text(
+                                  'Level: ${_capitalize(category.level)}',
+
+                                  style:
+                                      GoogleFonts.poppins(
+                                    color:
+                                        theme.color,
+                                    fontSize: 9,
+                                    fontWeight:
+                                        FontWeight
+                                            .w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Total pantun
+                          Row(
+                            mainAxisSize:
+                                MainAxisSize.min,
+
+                            children: [
+                              const Icon(
+                                Icons
+                                    .description_outlined,
+                                size: 16,
+                                color:
+                                    secondaryText,
+                              ),
+
+                              const SizedBox(
+                                width: 4,
+                              ),
+
+                              Text(
+                                '${category.totalPantun} pantun',
+
+                                style:
+                                    GoogleFonts.poppins(
+                                  color:
+                                      secondaryText,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
 
-                const SizedBox(width: 4),
+                const SizedBox(width: 8),
 
-                // ===============================================
+                // =================================================
                 // ARROW / LOCK
-                // ===============================================
+                // =================================================
 
-                Icon(
-                  unlocked
-                      ? Icons
-                          .chevron_right_rounded
-                      : Icons.lock_rounded,
+                Container(
+                  width: 48,
+                  height: 48,
 
-                  size: 21,
+                  decoration: BoxDecoration(
+                    color: unlocked
+                        ? theme.buttonColor
+                        : const Color(
+                            0xFFE1E4EB,
+                          ),
 
-                  color: unlocked
-                      ? color
-                      : const Color(
-                          0xFF9BA4AC,
-                        ),
+                    shape: BoxShape.circle,
+                  ),
+
+                  child: Icon(
+                    unlocked
+                        ? Icons.chevron_right_rounded
+                        : Icons.lock_rounded,
+
+                    size: unlocked
+                        ? 29
+                        : 23,
+
+                    color: unlocked
+                        ? darkColor
+                        : const Color(
+                            0xFF9EA6B4,
+                          ),
+                  ),
                 ),
               ],
             ),
@@ -1122,61 +950,86 @@ class KategoriView extends GetView<KategoriController> {
   }
 
   // ============================================================
-  // CATEGORY IMAGE
+  // LEVEL BARS
   // ============================================================
 
-  Widget _buildCategoryImage(
-    String categoryName,
-    bool unlocked,
+  Widget _buildLevelBars(
+    Color color,
   ) {
-    final String? asset =
-        _getCategoryAsset(
-      categoryName,
-    );
+    return Row(
+      crossAxisAlignment:
+          CrossAxisAlignment.end,
 
-    if (asset == null) {
-      return Icon(
-        Icons.auto_stories_rounded,
+      children: [
+        Container(
+          width: 5,
+          height: 9,
 
-        size: 32,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(
+              2,
+            ),
+          ),
+        ),
 
-        color: unlocked
-            ? primaryColor
-            : const Color(
-                0xFF9EA7AF,
-              ),
-      );
-    }
+        const SizedBox(width: 2),
 
-    return Opacity(
-      opacity: unlocked
-          ? 1
-          : 0.38,
+        Container(
+          width: 5,
+          height: 15,
 
-      child: Image.asset(
-        asset,
-
-        fit: BoxFit.contain,
-
-        errorBuilder: (
-          context,
-          error,
-          stackTrace,
-        ) {
-          return Icon(
-            Icons.auto_stories_rounded,
-
-            color: unlocked
-                ? primaryColor
-                : Colors.grey,
-          );
-        },
-      ),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(
+              2,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   // ============================================================
-  // ASSET MAPPING
+  // CATEGORY IMAGE
+  // ============================================================
+
+  Widget _buildCategoryImage(
+    String name,
+  ) {
+    final String? asset =
+        _getCategoryAsset(
+      name,
+    );
+
+    if (asset == null) {
+      return const Icon(
+        Icons.auto_stories_rounded,
+        color: primaryColor,
+        size: 42,
+      );
+    }
+
+    return Image.asset(
+      asset,
+
+      fit: BoxFit.contain,
+
+      errorBuilder: (
+        context,
+        error,
+        stackTrace,
+      ) {
+        return const Icon(
+          Icons.auto_stories_rounded,
+          color: primaryColor,
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // ASSET
   // ============================================================
 
   String? _getCategoryAsset(
@@ -1205,115 +1058,189 @@ class KategoriView extends GetView<KategoriController> {
   }
 
   // ============================================================
-  // CATEGORY COLOR
+  // CATEGORY THEME
   // ============================================================
 
-  Color _getCategoryColor(
+  _CategoryTheme _getTheme(
     String name,
   ) {
     switch (
         name.toLowerCase().trim()) {
       case 'nasihat':
-        return const Color(
-          0xFF47AC60,
+        return const _CategoryTheme(
+          color: Color(0xFF4EAD5F),
+          backgroundColor: Color(0xFFF0FAE9),
+          iconBackground: Color(0xFFE2F6D7),
+          chipColor: Color(0xFFDCF3D5),
+          buttonColor: Color(0xFFDDF4D7),
         );
 
       case 'cinta':
-        return const Color(
-          0xFFF15E79,
+        return const _CategoryTheme(
+          color: Color(0xFFF0657D),
+          backgroundColor: Color(0xFFFFF0F2),
+          iconBackground: Color(0xFFFFE2E6),
+          chipColor: Color(0xFFFFDDE5),
+          buttonColor: Color(0xFFFFDDE4),
         );
 
       case 'alam':
-        return const Color(
-          0xFF5598C3,
+        return const _CategoryTheme(
+          color: Color(0xFF5193C1),
+          backgroundColor: Color(0xFFEDF7FF),
+          iconBackground: Color(0xFFDCEFFC),
+          chipColor: Color(0xFFDDEFFC),
+          buttonColor: Color(0xFFDCEAF5),
         );
 
       case 'budaya':
-        return const Color(
-          0xFFB87C4C,
+        return const _CategoryTheme(
+          color: Color(0xFFE29536),
+          backgroundColor: Color(0xFFFFF6E6),
+          iconBackground: Color(0xFFFFECCB),
+          chipColor: Color(0xFFFFEAC5),
+          buttonColor: Color(0xFFFFE8C0),
         );
 
       case 'sosial':
-        return const Color(
-          0xFF8163D4,
+        return const _CategoryTheme(
+          color: Color(0xFF8264D0),
+          backgroundColor: Color(0xFFF5F1FF),
+          iconBackground: Color(0xFFEAE3FF),
+          chipColor: Color(0xFFE9E1FF),
+          buttonColor: Color(0xFFE9E2FA),
         );
 
       default:
-        return primaryColor;
+        return const _CategoryTheme(
+          color: primaryColor,
+          backgroundColor: Color(0xFFEDF9F7),
+          iconBackground: Color(0xFFDDF3EF),
+          chipColor: Color(0xFFDDF3EF),
+          buttonColor: Color(0xFFDDF3EF),
+        );
     }
   }
 
   // ============================================================
-  // QUOTE
+  // FOOTER
   // ============================================================
 
-  Widget _buildQuote() {
+  Widget _buildFooter() {
     return Container(
       width: double.infinity,
 
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8,
-      ),
-
       padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 16,
+        horizontal: 20,
+        vertical: 22,
       ),
 
       decoration: BoxDecoration(
-        color: const Color(
-          0xFFFFF8E7,
-        ).withOpacity(
-          0.92,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFE0F8F6),
+            Color(0xFFEEFBFC),
+          ],
         ),
 
         borderRadius: BorderRadius.circular(
-          22,
+          23,
         ),
-
-        border: Border.all(
-          color: Colors.white,
-          width: 2,
-        ),
-
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(
-              0.07,
-            ),
-            blurRadius: 10,
-            offset: const Offset(
-              0,
-              4,
-            ),
-          ),
-        ],
       ),
 
-      child: Text(
-        '“Pantun Serawai,\n'
-        'Warisan Kata untuk Generasi Mendatang”',
-
-        textAlign: TextAlign.center,
-
-        style: GoogleFonts.poppins(
-          color: const Color(
-            0xFF52637A,
+      child: Row(
+        children: [
+          const Icon(
+            Icons.eco_rounded,
+            size: 38,
+            color: Color(0xFF359E78),
           ),
-          fontSize: 11,
-          height: 1.5,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.w500,
-        ),
+
+          const SizedBox(width: 10),
+
+          Expanded(
+            child: Text(
+              '“Melestarikan Pantun Serawai,\n'
+              'Melangkah ke Masa Depan”',
+
+              textAlign: TextAlign.center,
+
+              style: GoogleFonts.poppins(
+                color: const Color(
+                  0xFF657891,
+                ),
+                fontSize: 12,
+                height: 1.5,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          const Icon(
+            Icons.eco_outlined,
+            size: 38,
+            color: Color(0xFF64C7B0),
+          ),
+        ],
       ),
     );
   }
 
   // ============================================================
-  // EMPTY STATE
+  // EMPTY
   // ============================================================
 
-  Widget _buildEmptyState() {
+  Widget _buildEmpty() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        children: [
+          const Icon(
+            Icons.auto_stories_outlined,
+            size: 70,
+            color: primaryColor,
+          ),
+
+          const SizedBox(height: 15),
+
+          Text(
+            'Belum ada kategori',
+
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              color: darkColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          ElevatedButton.icon(
+            onPressed:
+                controller.loadData,
+
+            icon: const Icon(
+              Icons.refresh,
+            ),
+
+            label: const Text(
+              'Muat Ulang',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // ERROR
+  // ============================================================
+
+  Widget _buildError() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(
@@ -1326,107 +1253,20 @@ class KategoriView extends GetView<KategoriController> {
 
           children: [
             const Icon(
-              Icons.auto_stories_outlined,
-              size: 70,
-              color: primaryColor,
+              Icons.cloud_off_rounded,
+              size: 65,
+              color: Color(0xFFE66969),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 15),
 
             Text(
-              'Belum Ada Kategori',
+              'Gagal memuat kategori',
 
               style: GoogleFonts.poppins(
-                color: darkColor,
                 fontSize: 18,
-                fontWeight:
-                    FontWeight.w800,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            Text(
-              'Kategori pantun belum tersedia.',
-
-              textAlign: TextAlign.center,
-
-              style: GoogleFonts.poppins(
-                color: secondaryText,
-                fontSize: 12,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton.icon(
-              onPressed:
-                  controller.loadData,
-
-              icon: const Icon(
-                Icons.refresh_rounded,
-              ),
-
-              label: const Text(
-                'Muat Ulang',
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // ERROR STATE
-  // ============================================================
-
-  Widget _buildErrorState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(
-          30,
-        ),
-
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-
-          children: [
-            Container(
-              width: 78,
-              height: 78,
-
-              decoration:
-                  const BoxDecoration(
-                color: Color(
-                  0xFFFFEDED,
-                ),
-
-                shape: BoxShape.circle,
-              ),
-
-              child: const Icon(
-                Icons.cloud_off_rounded,
-
-                size: 38,
-
-                color: Color(
-                  0xFFE26868,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 17),
-
-            Text(
-              'Gagal Memuat Kategori',
-
-              style: GoogleFonts.poppins(
                 color: darkColor,
-                fontSize: 18,
-                fontWeight:
-                    FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
 
@@ -1456,35 +1296,14 @@ class KategoriView extends GetView<KategoriController> {
 
                 foregroundColor:
                     Colors.white,
-
-                elevation: 0,
-
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 13,
-                ),
-
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    14,
-                  ),
-                ),
               ),
 
               icon: const Icon(
-                Icons.refresh_rounded,
+                Icons.refresh,
               ),
 
-              label: Text(
+              label: const Text(
                 'Coba Lagi',
-
-                style: GoogleFonts.poppins(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
               ),
             ),
           ],
@@ -1494,7 +1313,7 @@ class KategoriView extends GetView<KategoriController> {
   }
 
   // ============================================================
-  // HELPER
+  // CAPITALIZE
   // ============================================================
 
   String _capitalize(
@@ -1504,10 +1323,30 @@ class KategoriView extends GetView<KategoriController> {
       return value;
     }
 
-    final String text =
+    final text =
         value.trim();
 
     return '${text[0].toUpperCase()}'
         '${text.substring(1).toLowerCase()}';
   }
+}
+
+// ============================================================
+// CATEGORY THEME MODEL
+// ============================================================
+
+class _CategoryTheme {
+  final Color color;
+  final Color backgroundColor;
+  final Color iconBackground;
+  final Color chipColor;
+  final Color buttonColor;
+
+  const _CategoryTheme({
+    required this.color,
+    required this.backgroundColor,
+    required this.iconBackground,
+    required this.chipColor,
+    required this.buttonColor,
+  });
 }
