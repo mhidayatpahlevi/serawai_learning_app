@@ -17,11 +17,12 @@ class KategoriView extends GetView<KategoriController> {
   static const Color primaryColor = Color(0xFF2F9C95);
   static const Color darkColor = Color(0xFF13213D);
   static const Color secondaryText = Color(0xFF73809A);
+  static const Color backgroundColor = Color(0xFFF9FCFC);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FCFC),
+      backgroundColor: backgroundColor,
 
       body: Obx(
         () {
@@ -53,27 +54,33 @@ class KategoriView extends GetView<KategoriController> {
             return _buildEmpty();
           }
 
+          // ====================================================
+          // CONTENT
+          // ====================================================
+
           return RefreshIndicator(
             color: primaryColor,
             onRefresh: controller.loadData,
 
             child: ListView(
+              padding: EdgeInsets.zero,
+
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics(),
               ),
 
-              padding: EdgeInsets.zero,
-
               children: [
-                // =================================================
-                // HEADER + BANNER + LEVEL
-                // =================================================
+                // ===============================================
+                // TOP
+                // ===============================================
 
-                _buildTopSection(context),
+                _buildTopSection(
+                  context,
+                ),
 
-                // =================================================
+                // ===============================================
                 // CONTENT
-                // =================================================
+                // ===============================================
 
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
@@ -87,17 +94,15 @@ class KategoriView extends GetView<KategoriController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [
-                      // =============================================
-                      // URUTAN BELAJAR
-                      // =============================================
-
                       _buildSectionHeader(),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(
+                        height: 14,
+                      ),
 
-                      // =============================================
+                      // ==========================================
                       // CATEGORY LIST
-                      // =============================================
+                      // ==========================================
 
                       ...controller.categories.map(
                         (category) {
@@ -107,11 +112,9 @@ class KategoriView extends GetView<KategoriController> {
                         },
                       ),
 
-                      const SizedBox(height: 8),
-
-                      // =============================================
-                      // FOOTER QUOTE
-                      // =============================================
+                      const SizedBox(
+                        height: 8,
+                      ),
 
                       _buildFooter(),
                     ],
@@ -137,7 +140,7 @@ class KategoriView extends GetView<KategoriController> {
 
     const double appBarHeight = 64;
     const double bannerHeight = 190;
-    const double levelHeight = 115;
+    const double levelCardHeight = 116;
 
     final double headerHeight =
         statusBar + appBarHeight;
@@ -145,8 +148,8 @@ class KategoriView extends GetView<KategoriController> {
     final double totalHeight =
         headerHeight +
         bannerHeight +
-        levelHeight -
-        30;
+        levelCardHeight -
+        28;
 
     return SizedBox(
       height: totalHeight,
@@ -156,7 +159,7 @@ class KategoriView extends GetView<KategoriController> {
 
         children: [
           // ====================================================
-          // BACKGROUND HEADER
+          // BACKGROUND
           // ====================================================
 
           Positioned(
@@ -164,7 +167,9 @@ class KategoriView extends GetView<KategoriController> {
             left: 0,
             right: 0,
 
-            height: headerHeight + bannerHeight,
+            height:
+                headerHeight +
+                bannerHeight,
 
             child: Container(
               decoration: const BoxDecoration(
@@ -181,7 +186,7 @@ class KategoriView extends GetView<KategoriController> {
           ),
 
           // ====================================================
-          // APPBAR
+          // APP BAR MANUAL
           // ====================================================
 
           Positioned(
@@ -220,11 +225,14 @@ class KategoriView extends GetView<KategoriController> {
 
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment:
+                        MainAxisAlignment.center,
 
                     children: [
                       Text(
                         'Kategori Pantun',
+
+                        textAlign: TextAlign.center,
 
                         style: GoogleFonts.poppins(
                           fontSize: 21,
@@ -233,13 +241,17 @@ class KategoriView extends GetView<KategoriController> {
                         ),
                       ),
 
-                      const SizedBox(height: 1),
+                      const SizedBox(
+                        height: 1,
+                      ),
 
                       Text(
                         'Pilih kategori untuk memulai belajar',
 
+                        textAlign: TextAlign.center,
+
                         style: GoogleFonts.poppins(
-                          fontSize: 11,
+                          fontSize: 10,
                           color: secondaryText,
                         ),
                       ),
@@ -247,7 +259,7 @@ class KategoriView extends GetView<KategoriController> {
                   ),
                 ),
 
-                // Agar judul tetap center
+                // Supaya judul benar-benar berada di tengah
                 const SizedBox(
                   width: 45,
                 ),
@@ -269,6 +281,8 @@ class KategoriView extends GetView<KategoriController> {
             child: Image.asset(
               'assets/images/kategori/banner.png',
 
+              width: double.infinity,
+
               fit: BoxFit.cover,
 
               alignment: Alignment.center,
@@ -278,23 +292,13 @@ class KategoriView extends GetView<KategoriController> {
                 error,
                 stackTrace,
               ) {
-                return Container(
-                  color: const Color(0xFFE3F7F2),
-
-                  alignment: Alignment.center,
-
-                  child: const Icon(
-                    Icons.auto_stories_rounded,
-                    color: primaryColor,
-                    size: 80,
-                  ),
-                );
+                return _buildBannerFallback();
               },
             ),
           ),
 
           // ====================================================
-          // LEVEL CARD OVERLAP
+          // LEVEL CARD
           // ====================================================
 
           Positioned(
@@ -307,6 +311,62 @@ class KategoriView extends GetView<KategoriController> {
             right: 16,
 
             child: _buildLevelCard(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // BANNER FALLBACK
+  // ============================================================
+
+  Widget _buildBannerFallback() {
+    return Container(
+      width: double.infinity,
+
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFDDF8F4),
+            Color(0xFFE8F9FF),
+          ],
+        ),
+      ),
+
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 28,
+              ),
+
+              child: Text(
+                '“Setiap pantun\n'
+                'menyimpan pelajaran\n'
+                'untuk kehidupan”',
+
+                style: GoogleFonts.poppins(
+                  color: darkColor,
+                  fontSize: 15,
+                  height: 1.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+
+          const Padding(
+            padding: EdgeInsets.only(
+              right: 28,
+            ),
+
+            child: Icon(
+              Icons.auto_stories_rounded,
+              color: primaryColor,
+              size: 80,
+            ),
           ),
         ],
       ),
@@ -331,7 +391,7 @@ class KategoriView extends GetView<KategoriController> {
 
     final double progress =
         total == 0
-            ? 0
+            ? 0.0
             : unlocked / total;
 
     return Container(
@@ -340,13 +400,13 @@ class KategoriView extends GetView<KategoriController> {
       ),
 
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 15,
+        horizontal: 15,
+        vertical: 14,
       ),
 
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(
-          0.96,
+          0.97,
         ),
 
         borderRadius: BorderRadius.circular(
@@ -383,8 +443,8 @@ class KategoriView extends GetView<KategoriController> {
           // ====================================================
 
           Container(
-            width: 74,
-            height: 74,
+            width: 68,
+            height: 68,
 
             decoration: BoxDecoration(
               color: const Color(
@@ -392,14 +452,14 @@ class KategoriView extends GetView<KategoriController> {
               ),
 
               borderRadius: BorderRadius.circular(
-                24,
+                22,
               ),
             ),
 
             child: Center(
               child: Container(
-                width: 52,
-                height: 52,
+                width: 50,
+                height: 50,
 
                 decoration: const BoxDecoration(
                   color: Color(
@@ -411,7 +471,7 @@ class KategoriView extends GetView<KategoriController> {
 
                 child: const Icon(
                   Icons.workspace_premium_rounded,
-                  size: 34,
+                  size: 32,
                   color: Color(
                     0xFFF4A72C,
                   ),
@@ -420,15 +480,21 @@ class KategoriView extends GetView<KategoriController> {
             ),
           ),
 
-          const SizedBox(width: 15),
+          const SizedBox(
+            width: 13,
+          ),
 
           // ====================================================
-          // LEVEL INFORMATION
+          // LEVEL
           // ====================================================
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              mainAxisSize:
+                  MainAxisSize.min,
 
               children: [
                 Text(
@@ -436,7 +502,7 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: secondaryText,
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -452,15 +518,17 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: darkColor,
-                    fontSize: 21,
+                    fontSize: 19,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
 
-                const SizedBox(height: 2),
+                const SizedBox(
+                  height: 2,
+                ),
 
                 Text(
-                  'Kategori terbuka sampai $unlocked',
+                  'Terbuka sampai kategori $unlocked',
 
                   maxLines: 1,
 
@@ -471,24 +539,30 @@ class KategoriView extends GetView<KategoriController> {
                     color: const Color(
                       0xFF586A88,
                     ),
-                    fontSize: 11,
+                    fontSize: 9,
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(width: 10),
+          const SizedBox(
+            width: 10,
+          ),
 
           // ====================================================
-          // PROGRESS
+          // COUNTER
           // ====================================================
 
           SizedBox(
-            width: 95,
+            width: 82,
 
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment:
+                  CrossAxisAlignment.end,
+
+              mainAxisSize:
+                  MainAxisSize.min,
 
               children: [
                 Text(
@@ -496,7 +570,7 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: darkColor,
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -506,21 +580,25 @@ class KategoriView extends GetView<KategoriController> {
 
                   style: GoogleFonts.poppins(
                     color: secondaryText,
-                    fontSize: 10,
+                    fontSize: 9,
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(
+                  height: 10,
+                ),
 
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(
+                  borderRadius:
+                      BorderRadius.circular(
                     20,
                   ),
 
-                  child: LinearProgressIndicator(
+                  child:
+                      LinearProgressIndicator(
                     value: progress,
 
-                    minHeight: 8,
+                    minHeight: 7,
 
                     backgroundColor:
                         const Color(
@@ -561,44 +639,92 @@ class KategoriView extends GetView<KategoriController> {
           ),
         ),
 
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 13,
-            vertical: 8,
-          ),
+        Material(
+          color: Colors.transparent,
 
-          decoration: BoxDecoration(
-            color: const Color(
-              0xFFE1F7F4,
-            ),
-
+          child: InkWell(
             borderRadius: BorderRadius.circular(
               30,
             ),
-          ),
 
-          child: Row(
-            children: [
-              const Icon(
-                Icons.menu_book_rounded,
-                color: primaryColor,
-                size: 18,
+            onTap: () {
+              Get.snackbar(
+                'Panduan Belajar',
+                'Pilih kategori yang terbuka dan selesaikan latihan untuk membuka kategori berikutnya.',
+
+                snackPosition:
+                    SnackPosition.BOTTOM,
+
+                margin:
+                    const EdgeInsets.all(
+                  16,
+                ),
+
+                borderRadius:
+                    16,
+
+                backgroundColor:
+                    Colors.white,
+
+                colorText:
+                    darkColor,
+
+                icon:
+                    const Icon(
+                  Icons.menu_book_rounded,
+                  color: primaryColor,
+                ),
+              );
+            },
+
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
               ),
 
-              const SizedBox(width: 5),
+              decoration: BoxDecoration(
+                color: const Color(
+                  0xFFE1F7F4,
+                ),
 
-              Text(
-                'Lihat Panduan',
-
-                style: GoogleFonts.poppins(
-                  color: const Color(
-                    0xFF187E77,
-                  ),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                borderRadius:
+                    BorderRadius.circular(
+                  30,
                 ),
               ),
-            ],
+
+              child: Row(
+                mainAxisSize:
+                    MainAxisSize.min,
+
+                children: [
+                  const Icon(
+                    Icons.menu_book_rounded,
+                    color: primaryColor,
+                    size: 17,
+                  ),
+
+                  const SizedBox(
+                    width: 5,
+                  ),
+
+                  Text(
+                    'Panduan',
+
+                    style: GoogleFonts.poppins(
+                      color: const Color(
+                        0xFF187E77,
+                      ),
+                      fontSize: 10,
+                      fontWeight:
+                          FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -622,6 +748,27 @@ class KategoriView extends GetView<KategoriController> {
       category.nama,
     );
 
+    final Color cardColor =
+        unlocked
+            ? theme.backgroundColor
+            : const Color(
+                0xFFF1F3F5,
+              );
+
+    final Color titleColor =
+        unlocked
+            ? darkColor
+            : const Color(
+                0xFF838D9B,
+              );
+
+    final Color descriptionColor =
+        unlocked
+            ? secondaryText
+            : const Color(
+                0xFFA0A8B2,
+              );
+
     return Container(
       margin: const EdgeInsets.only(
         bottom: 12,
@@ -630,15 +777,19 @@ class KategoriView extends GetView<KategoriController> {
       child: Material(
         color: Colors.transparent,
 
-        borderRadius: BorderRadius.circular(
+        borderRadius:
+            BorderRadius.circular(
           22,
         ),
 
         child: InkWell(
-          borderRadius: BorderRadius.circular(
+          borderRadius:
+              BorderRadius.circular(
             22,
           ),
 
+          // Tetap panggil controller,
+          // karena controller Anda sudah menangani kategori terkunci.
           onTap: () {
             controller.openCategory(
               category,
@@ -646,54 +797,71 @@ class KategoriView extends GetView<KategoriController> {
           },
 
           child: Ink(
-            padding: const EdgeInsets.all(
+            padding:
+                const EdgeInsets.all(
               13,
             ),
 
             decoration: BoxDecoration(
-              color: unlocked
-                  ? theme.backgroundColor
-                  : theme.backgroundColor.withOpacity(
-                      0.62,
-                    ),
+              color: cardColor,
 
-              borderRadius: BorderRadius.circular(
+              borderRadius:
+                  BorderRadius.circular(
                 22,
+              ),
+
+              border: Border.all(
+                color: unlocked
+                    ? theme.color.withOpacity(
+                        0.05,
+                      )
+                    : const Color(
+                        0xFFE5E8EC,
+                      ),
               ),
             ),
 
             child: Row(
               children: [
                 // =================================================
-                // ICON + NUMBER
+                // IMAGE + NUMBER
                 // =================================================
 
                 Stack(
-                  clipBehavior: Clip.none,
+                  clipBehavior:
+                      Clip.none,
 
                   children: [
                     Container(
-                      width: 88,
-                      height: 88,
+                      width: 82,
+                      height: 82,
 
-                      padding: const EdgeInsets.all(
-                        15,
+                      padding:
+                          const EdgeInsets.all(
+                        13,
                       ),
 
-                      decoration: BoxDecoration(
-                        color:
-                            theme.iconBackground,
+                      decoration:
+                          BoxDecoration(
+                        color: unlocked
+                            ? theme
+                                .iconBackground
+                            : const Color(
+                                0xFFE5E8EA,
+                              ),
 
                         borderRadius:
-                            BorderRadius.circular(
-                          20,
+                            BorderRadius
+                                .circular(
+                          19,
                         ),
                       ),
 
                       child: Opacity(
-                        opacity: unlocked
-                            ? 1
-                            : 0.60,
+                        opacity:
+                            unlocked
+                                ? 1.0
+                                : 0.40,
 
                         child:
                             _buildCategoryImage(
@@ -702,13 +870,17 @@ class KategoriView extends GetView<KategoriController> {
                       ),
                     ),
 
+                    // =================================================
+                    // NUMBER
+                    // =================================================
+
                     Positioned(
                       top: -5,
                       left: -5,
 
                       child: Container(
-                        width: 38,
-                        height: 38,
+                        width: 36,
+                        height: 36,
 
                         alignment:
                             Alignment.center,
@@ -717,9 +889,8 @@ class KategoriView extends GetView<KategoriController> {
                             BoxDecoration(
                           color: unlocked
                               ? theme.color
-                              : theme.color
-                                  .withOpacity(
-                                  0.72,
+                              : const Color(
+                                  0xFF9CA5AF,
                                 ),
 
                           shape:
@@ -729,8 +900,22 @@ class KategoriView extends GetView<KategoriController> {
                               Border.all(
                             color:
                                 Colors.white,
-                            width: 2,
+                            width:
+                                2,
                           ),
+
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Colors.black
+                                      .withOpacity(
+                                0.08,
+                              ),
+
+                              blurRadius:
+                                  5,
+                            ),
+                          ],
                         ),
 
                         child: Text(
@@ -740,9 +925,13 @@ class KategoriView extends GetView<KategoriController> {
                               GoogleFonts.poppins(
                             color:
                                 Colors.white,
-                            fontSize: 15,
+
+                            fontSize:
+                                14,
+
                             fontWeight:
-                                FontWeight.w700,
+                                FontWeight
+                                    .w700,
                           ),
                         ),
                       ),
@@ -750,7 +939,9 @@ class KategoriView extends GetView<KategoriController> {
                   ],
                 ),
 
-                const SizedBox(width: 15),
+                const SizedBox(
+                  width: 14,
+                ),
 
                 // =================================================
                 // INFORMATION
@@ -762,21 +953,35 @@ class KategoriView extends GetView<KategoriController> {
                         CrossAxisAlignment.start,
 
                     children: [
+                      // =============================================
+                      // NAME
+                      // =============================================
+
                       Text(
                         category.nama,
 
-                        maxLines: 1,
+                        maxLines:
+                            1,
 
                         overflow:
                             TextOverflow.ellipsis,
 
-                        style: GoogleFonts.poppins(
-                          color: darkColor,
-                          fontSize: 17,
+                        style:
+                            GoogleFonts.poppins(
+                          color:
+                              titleColor,
+
+                          fontSize:
+                              16,
+
                           fontWeight:
                               FontWeight.w800,
                         ),
                       ),
+
+                      // =============================================
+                      // DESCRIPTION
+                      // =============================================
 
                       if (category
                           .description
@@ -789,7 +994,8 @@ class KategoriView extends GetView<KategoriController> {
                         Text(
                           category.description,
 
-                          maxLines: 2,
+                          maxLines:
+                              2,
 
                           overflow:
                               TextOverflow.ellipsis,
@@ -797,35 +1003,48 @@ class KategoriView extends GetView<KategoriController> {
                           style:
                               GoogleFonts.poppins(
                             color:
-                                secondaryText,
-                            fontSize: 11,
-                            height: 1.35,
+                                descriptionColor,
+
+                            fontSize:
+                                10,
+
+                            height:
+                                1.35,
                           ),
                         ),
                       ],
 
-                      const SizedBox(height: 8),
+                      const SizedBox(
+                        height: 8,
+                      ),
 
                       // =============================================
                       // BOTTOM INFORMATION
                       // =============================================
 
                       Wrap(
-                        spacing: 9,
+                        spacing: 8,
                         runSpacing: 6,
 
                         crossAxisAlignment:
                             WrapCrossAlignment.center,
 
                         children: [
-                          // Level indicator
+                          // =========================================
+                          // LEVEL
+                          // =========================================
+
                           Row(
                             mainAxisSize:
                                 MainAxisSize.min,
 
                             children: [
                               _buildLevelBars(
-                                theme.color,
+                                unlocked
+                                    ? theme.color
+                                    : const Color(
+                                        0xFF9EA7B0,
+                                      ),
                               ),
 
                               const SizedBox(
@@ -836,14 +1055,20 @@ class KategoriView extends GetView<KategoriController> {
                                 padding:
                                     const EdgeInsets
                                         .symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
+                                  horizontal:
+                                      7,
+
+                                  vertical:
+                                      3,
                                 ),
 
                                 decoration:
                                     BoxDecoration(
-                                  color:
-                                      theme.chipColor,
+                                  color: unlocked
+                                      ? theme.chipColor
+                                      : const Color(
+                                          0xFFE1E4E7,
+                                        ),
 
                                   borderRadius:
                                       BorderRadius
@@ -857,30 +1082,45 @@ class KategoriView extends GetView<KategoriController> {
 
                                   style:
                                       GoogleFonts.poppins(
-                                    color:
-                                        theme.color,
-                                    fontSize: 9,
+                                    color: unlocked
+                                        ? theme.color
+                                        : const Color(
+                                            0xFF8A939D,
+                                          ),
+
+                                    fontSize:
+                                        8,
+
                                     fontWeight:
                                         FontWeight
-                                            .w500,
+                                            .w600,
                                   ),
                                 ),
                               ),
                             ],
                           ),
 
-                          // Total pantun
+                          // =========================================
+                          // TOTAL PANTUN
+                          // =========================================
+
                           Row(
                             mainAxisSize:
                                 MainAxisSize.min,
 
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons
                                     .description_outlined,
-                                size: 16,
-                                color:
-                                    secondaryText,
+
+                                size:
+                                    15,
+
+                                color: unlocked
+                                    ? secondaryText
+                                    : const Color(
+                                        0xFFA0A8B2,
+                                      ),
                               ),
 
                               const SizedBox(
@@ -892,9 +1132,14 @@ class KategoriView extends GetView<KategoriController> {
 
                                 style:
                                     GoogleFonts.poppins(
-                                  color:
-                                      secondaryText,
-                                  fontSize: 10,
+                                  color: unlocked
+                                      ? secondaryText
+                                      : const Color(
+                                          0xFFA0A8B2,
+                                        ),
+
+                                  fontSize:
+                                      9,
                                 ),
                               ),
                             ],
@@ -905,40 +1150,48 @@ class KategoriView extends GetView<KategoriController> {
                   ),
                 ),
 
-                const SizedBox(width: 8),
+                const SizedBox(
+                  width: 7,
+                ),
 
                 // =================================================
                 // ARROW / LOCK
                 // =================================================
 
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 46,
+                  height: 46,
 
-                  decoration: BoxDecoration(
+                  decoration:
+                      BoxDecoration(
                     color: unlocked
                         ? theme.buttonColor
                         : const Color(
-                            0xFFE1E4EB,
+                            0xFFE1E4E8,
                           ),
 
-                    shape: BoxShape.circle,
+                    shape:
+                        BoxShape.circle,
                   ),
 
                   child: Icon(
                     unlocked
-                        ? Icons.chevron_right_rounded
-                        : Icons.lock_rounded,
+                        ? Icons
+                            .chevron_right_rounded
+                        : Icons
+                            .lock_rounded,
 
-                    size: unlocked
-                        ? 29
-                        : 23,
+                    size:
+                        unlocked
+                            ? 28
+                            : 22,
 
-                    color: unlocked
-                        ? darkColor
-                        : const Color(
-                            0xFF9EA6B4,
-                          ),
+                    color:
+                        unlocked
+                            ? theme.color
+                            : const Color(
+                                0xFF9CA5B0,
+                              ),
                   ),
                 ),
               ],
@@ -962,32 +1215,121 @@ class KategoriView extends GetView<KategoriController> {
 
       children: [
         Container(
-          width: 5,
-          height: 9,
+          width: 4,
+          height: 8,
 
-          decoration: BoxDecoration(
+          decoration:
+              BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(
+
+            borderRadius:
+                BorderRadius.circular(
               2,
             ),
           ),
         ),
 
-        const SizedBox(width: 2),
+        const SizedBox(
+          width: 2,
+        ),
 
         Container(
-          width: 5,
-          height: 15,
+          width: 4,
+          height: 13,
 
-          decoration: BoxDecoration(
+          decoration:
+              BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(
+
+            borderRadius:
+                BorderRadius.circular(
+              2,
+            ),
+          ),
+        ),
+
+        const SizedBox(
+          width: 2,
+        ),
+
+        Container(
+          width: 4,
+          height: 17,
+
+          decoration:
+              BoxDecoration(
+            color: color.withOpacity(
+              0.55,
+            ),
+
+            borderRadius:
+                BorderRadius.circular(
               2,
             ),
           ),
         ),
       ],
     );
+  }
+
+  // ============================================================
+  // NORMALISASI CATEGORY
+  // ============================================================
+
+  String _categoryKey(
+    String name,
+  ) {
+    final String value =
+        name
+            .toLowerCase()
+            .trim()
+            .replaceAll(
+              '_',
+              ' ',
+            )
+            .replaceAll(
+              '-',
+              ' ',
+            )
+            .replaceAll(
+              RegExp(r'\s+'),
+              ' ',
+            );
+
+    if (value.contains(
+      'nasihat',
+    )) {
+      return 'nasihat';
+    }
+
+    if (value.contains(
+      'jenaka',
+    )) {
+      return 'jenaka';
+    }
+
+    if (value.contains(
+          'teka teki',
+        ) ||
+        value.contains(
+          'teka',
+        )) {
+      return 'teka teki';
+    }
+
+    if (value.contains(
+      'kiasan',
+    )) {
+      return 'kiasan';
+    }
+
+    if (value.contains(
+      'agama',
+    )) {
+      return 'agama';
+    }
+
+    return value;
   }
 
   // ============================================================
@@ -1002,16 +1344,37 @@ class KategoriView extends GetView<KategoriController> {
       name,
     );
 
+    final IconData fallbackIcon =
+        _getCategoryFallbackIcon(
+      name,
+    );
+
+    final Color color =
+        _getTheme(
+      name,
+    ).color;
+
+    // ==========================================================
+    // JIKA ASSET TIDAK DITEMUKAN
+    // ==========================================================
+
     if (asset == null) {
-      return const Icon(
-        Icons.auto_stories_rounded,
-        color: primaryColor,
+      return Icon(
+        fallbackIcon,
+        color: color,
         size: 42,
       );
     }
 
+    // ==========================================================
+    // ASSET
+    // ==========================================================
+
     return Image.asset(
       asset,
+
+      width: 55,
+      height: 55,
 
       fit: BoxFit.contain,
 
@@ -1020,40 +1383,100 @@ class KategoriView extends GetView<KategoriController> {
         error,
         stackTrace,
       ) {
-        return const Icon(
-          Icons.auto_stories_rounded,
-          color: primaryColor,
+        // Kalau file asset belum tersedia,
+        // aplikasi tetap menampilkan icon fallback.
+
+        return Icon(
+          fallbackIcon,
+          color: color,
+          size: 42,
         );
       },
     );
   }
 
   // ============================================================
-  // ASSET
+  // CATEGORY ASSET
   // ============================================================
 
   String? _getCategoryAsset(
     String name,
   ) {
-    switch (
-        name.toLowerCase().trim()) {
+    switch (_categoryKey(name)) {
+      // ========================================================
+      // NASIHAT
+      // ========================================================
+
       case 'nasihat':
         return 'assets/images/kategori/daunicon.png';
 
-      case 'agama':
-        return 'assets/images/kategori/hearthicon.png';
-
-      case 'teka-teki':
-        return 'assets/images/kategori/mountainicon.png';
+      // ========================================================
+      // JENAKA
+      // ========================================================
 
       case 'jenaka':
-        return 'assets/images/kategori/rumahicon.png';
+
+        // Saat ini memakai asset yang sudah ada di project Anda.
+        // Kalau nanti punya jenakaicon.png, ubah path ini.
+        return 'assets/images/kategori/jenaka.png';
+
+      // ========================================================
+      // TEKA-TEKI
+      // ========================================================
+
+      case 'teka teki':
+
+        // Saat ini memakai asset yang sudah ada.
+        return 'assets/images/kategori/teki.png';
+
+      // ========================================================
+      // KIASAN
+      // ========================================================
 
       case 'kiasan':
+
+        // Saat ini memakai asset yang sudah ada.
         return 'assets/images/kategori/socialicon.png';
+
+      // ========================================================
+      // AGAMA
+      // ========================================================
+
+      case 'agama':
+
+        // Saat ini memakai asset yang sudah ada.
+        return 'assets/images/kategori/hearthicon.png';
 
       default:
         return null;
+    }
+  }
+
+  // ============================================================
+  // FALLBACK ICON
+  // ============================================================
+
+  IconData _getCategoryFallbackIcon(
+    String name,
+  ) {
+    switch (_categoryKey(name)) {
+      case 'nasihat':
+        return Icons.eco_rounded;
+
+      case 'jenaka':
+        return Icons.sentiment_very_satisfied_rounded;
+
+      case 'teka teki':
+        return Icons.help_outline_rounded;
+
+      case 'kiasan':
+        return Icons.format_quote_rounded;
+
+      case 'agama':
+        return Icons.menu_book_rounded;
+
+      default:
+        return Icons.auto_stories_rounded;
     }
   }
 
@@ -1064,60 +1487,165 @@ class KategoriView extends GetView<KategoriController> {
   _CategoryTheme _getTheme(
     String name,
   ) {
-    switch (
-        name.toLowerCase().trim()) {
+    switch (_categoryKey(name)) {
+      // ========================================================
+      // NASIHAT - HIJAU
+      // ========================================================
+
       case 'nasihat':
         return const _CategoryTheme(
-          color: Color(0xFF4EAD5F),
-          backgroundColor: Color(0xFFF0FAE9),
-          iconBackground: Color(0xFFE2F6D7),
-          chipColor: Color(0xFFDCF3D5),
-          buttonColor: Color(0xFFDDF4D7),
+          color: Color(
+            0xFF4EAD5F,
+          ),
+
+          backgroundColor: Color(
+            0xFFF0FAE9,
+          ),
+
+          iconBackground: Color(
+            0xFFE2F6D7,
+          ),
+
+          chipColor: Color(
+            0xFFDCF3D5,
+          ),
+
+          buttonColor: Color(
+            0xFFDDF4D7,
+          ),
         );
 
-      case 'agama':
-        return const _CategoryTheme(
-          color: Color(0xFFF0657D),
-          backgroundColor: Color(0xFFFFF0F2),
-          iconBackground: Color(0xFFFFE2E6),
-          chipColor: Color(0xFFFFDDE5),
-          buttonColor: Color(0xFFFFDDE4),
-        );
-
-      case 'teka-teki':
-        return const _CategoryTheme(
-          color: Color(0xFF5193C1),
-          backgroundColor: Color(0xFFEDF7FF),
-          iconBackground: Color(0xFFDCEFFC),
-          chipColor: Color(0xFFDDEFFC),
-          buttonColor: Color(0xFFDCEAF5),
-        );
+      // ========================================================
+      // JENAKA - ORANGE
+      // ========================================================
 
       case 'jenaka':
         return const _CategoryTheme(
-          color: Color(0xFFE29536),
-          backgroundColor: Color(0xFFFFF6E6),
-          iconBackground: Color(0xFFFFECCB),
-          chipColor: Color(0xFFFFEAC5),
-          buttonColor: Color(0xFFFFE8C0),
+          color: Color(
+            0xFFF29B38,
+          ),
+
+          backgroundColor: Color(
+            0xFFFFF6E6,
+          ),
+
+          iconBackground: Color(
+            0xFFFFEAC8,
+          ),
+
+          chipColor: Color(
+            0xFFFFEAC5,
+          ),
+
+          buttonColor: Color(
+            0xFFFFE8C0,
+          ),
         );
+
+      // ========================================================
+      // TEKA-TEKI - BIRU
+      // ========================================================
+
+      case 'teka teki':
+        return const _CategoryTheme(
+          color: Color(
+            0xFF5193C1,
+          ),
+
+          backgroundColor: Color(
+            0xFFEDF7FF,
+          ),
+
+          iconBackground: Color(
+            0xFFDCEFFC,
+          ),
+
+          chipColor: Color(
+            0xFFDDEFFC,
+          ),
+
+          buttonColor: Color(
+            0xFFDCEAF5,
+          ),
+        );
+
+      // ========================================================
+      // KIASAN - UNGU
+      // ========================================================
 
       case 'kiasan':
         return const _CategoryTheme(
-          color: Color(0xFF8264D0),
-          backgroundColor: Color(0xFFF5F1FF),
-          iconBackground: Color(0xFFEAE3FF),
-          chipColor: Color(0xFFE9E1FF),
-          buttonColor: Color(0xFFE9E2FA),
+          color: Color(
+            0xFF8264D0,
+          ),
+
+          backgroundColor: Color(
+            0xFFF5F1FF,
+          ),
+
+          iconBackground: Color(
+            0xFFEAE3FF,
+          ),
+
+          chipColor: Color(
+            0xFFE9E1FF,
+          ),
+
+          buttonColor: Color(
+            0xFFE9E2FA,
+          ),
         );
+
+      // ========================================================
+      // AGAMA - TOSCA
+      // ========================================================
+
+      case 'agama':
+        return const _CategoryTheme(
+          color: Color(
+            0xFF359F83,
+          ),
+
+          backgroundColor: Color(
+            0xFFECF9F5,
+          ),
+
+          iconBackground: Color(
+            0xFFDDF4EC,
+          ),
+
+          chipColor: Color(
+            0xFFD9F1E9,
+          ),
+
+          buttonColor: Color(
+            0xFFDDF3EC,
+          ),
+        );
+
+      // ========================================================
+      // DEFAULT
+      // ========================================================
 
       default:
         return const _CategoryTheme(
           color: primaryColor,
-          backgroundColor: Color(0xFFEDF9F7),
-          iconBackground: Color(0xFFDDF3EF),
-          chipColor: Color(0xFFDDF3EF),
-          buttonColor: Color(0xFFDDF3EF),
+
+          backgroundColor: Color(
+            0xFFEDF9F7,
+          ),
+
+          iconBackground: Color(
+            0xFFDDF3EF,
+          ),
+
+          chipColor: Color(
+            0xFFDDF3EF,
+          ),
+
+          buttonColor: Color(
+            0xFFDDF3EF,
+          ),
         );
     }
   }
@@ -1131,8 +1659,8 @@ class KategoriView extends GetView<KategoriController> {
       width: double.infinity,
 
       padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 22,
+        horizontal: 18,
+        vertical: 20,
       ),
 
       decoration: BoxDecoration(
@@ -1141,9 +1669,13 @@ class KategoriView extends GetView<KategoriController> {
             Color(0xFFE0F8F6),
             Color(0xFFEEFBFC),
           ],
+
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
 
-        borderRadius: BorderRadius.circular(
+        borderRadius:
+            BorderRadius.circular(
           23,
         ),
       ),
@@ -1152,37 +1684,56 @@ class KategoriView extends GetView<KategoriController> {
         children: [
           const Icon(
             Icons.eco_rounded,
-            size: 38,
-            color: Color(0xFF359E78),
+            size: 35,
+            color: Color(
+              0xFF359E78,
+            ),
           ),
 
-          const SizedBox(width: 10),
+          const SizedBox(
+            width: 8,
+          ),
 
           Expanded(
             child: Text(
               '“Melestarikan Pantun Serawai,\n'
               'Melangkah ke Masa Depan”',
 
-              textAlign: TextAlign.center,
+              textAlign:
+                  TextAlign.center,
 
-              style: GoogleFonts.poppins(
-                color: const Color(
+              style:
+                  GoogleFonts.poppins(
+                color:
+                    const Color(
                   0xFF657891,
                 ),
-                fontSize: 12,
-                height: 1.5,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
+
+                fontSize:
+                    11,
+
+                height:
+                    1.5,
+
+                fontStyle:
+                    FontStyle.italic,
+
+                fontWeight:
+                    FontWeight.w500,
               ),
             ),
           ),
 
-          const SizedBox(width: 10),
+          const SizedBox(
+            width: 8,
+          ),
 
           const Icon(
             Icons.eco_outlined,
-            size: 38,
-            color: Color(0xFF64C7B0),
+            size: 35,
+            color: Color(
+              0xFF64C7B0,
+            ),
           ),
         ],
       ),
@@ -1194,44 +1745,136 @@ class KategoriView extends GetView<KategoriController> {
   // ============================================================
 
   Widget _buildEmpty() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-
-        children: [
-          const Icon(
-            Icons.auto_stories_outlined,
-            size: 70,
-            color: primaryColor,
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding:
+              const EdgeInsets.all(
+            30,
           ),
 
-          const SizedBox(height: 15),
+          child: Column(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
 
-          Text(
-            'Belum ada kategori',
+            children: [
+              Container(
+                width: 82,
+                height: 82,
 
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              color: darkColor,
-              fontWeight: FontWeight.w700,
-            ),
+                decoration:
+                    const BoxDecoration(
+                  color: Color(
+                    0xFFE3F7F3,
+                  ),
+
+                  shape:
+                      BoxShape.circle,
+                ),
+
+                child: const Icon(
+                  Icons.auto_stories_outlined,
+                  size: 43,
+                  color: primaryColor,
+                ),
+              ),
+
+              const SizedBox(
+                height: 18,
+              ),
+
+              Text(
+                'Belum Ada Kategori',
+
+                style:
+                    GoogleFonts.poppins(
+                  fontSize:
+                      18,
+
+                  color:
+                      darkColor,
+
+                  fontWeight:
+                      FontWeight.w800,
+                ),
+              ),
+
+              const SizedBox(
+                height: 5,
+              ),
+
+              Text(
+                'Kategori pantun belum tersedia.',
+
+                textAlign:
+                    TextAlign.center,
+
+                style:
+                    GoogleFonts.poppins(
+                  color:
+                      secondaryText,
+
+                  fontSize:
+                      11,
+                ),
+              ),
+
+              const SizedBox(
+                height: 22,
+              ),
+
+              ElevatedButton.icon(
+                onPressed:
+                    controller.loadData,
+
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      primaryColor,
+
+                  foregroundColor:
+                      Colors.white,
+
+                  elevation:
+                      0,
+
+                  padding:
+                      const EdgeInsets.symmetric(
+                    horizontal:
+                        20,
+
+                    vertical:
+                        12,
+                  ),
+
+                  shape:
+                      RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(
+                      14,
+                    ),
+                  ),
+                ),
+
+                icon:
+                    const Icon(
+                  Icons.refresh_rounded,
+                ),
+
+                label:
+                    Text(
+                  'Muat Ulang',
+
+                  style:
+                      GoogleFonts.poppins(
+                    fontWeight:
+                        FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-
-          const SizedBox(height: 20),
-
-          ElevatedButton.icon(
-            onPressed:
-                controller.loadData,
-
-            icon: const Icon(
-              Icons.refresh,
-            ),
-
-            label: const Text(
-              'Muat Ulang',
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -1241,72 +1884,143 @@ class KategoriView extends GetView<KategoriController> {
   // ============================================================
 
   Widget _buildError() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(
-          30,
-        ),
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding:
+              const EdgeInsets.all(
+            30,
+          ),
 
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          child: Column(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
 
-          children: [
-            const Icon(
-              Icons.cloud_off_rounded,
-              size: 65,
-              color: Color(0xFFE66969),
-            ),
+            children: [
+              Container(
+                width: 82,
+                height: 82,
 
-            const SizedBox(height: 15),
+                decoration:
+                    const BoxDecoration(
+                  color: Color(
+                    0xFFFFEDED,
+                  ),
 
-            Text(
-              'Gagal memuat kategori',
+                  shape:
+                      BoxShape.circle,
+                ),
 
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                color: darkColor,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 7),
-
-            Text(
-              controller.errorMessage.value,
-
-              textAlign: TextAlign.center,
-
-              style: GoogleFonts.poppins(
-                color: secondaryText,
-                fontSize: 12,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton.icon(
-              onPressed:
-                  controller.loadData,
-
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    primaryColor,
-
-                foregroundColor:
-                    Colors.white,
+                child:
+                    const Icon(
+                  Icons.cloud_off_rounded,
+                  size: 40,
+                  color: Color(
+                    0xFFE66969,
+                  ),
+                ),
               ),
 
-              icon: const Icon(
-                Icons.refresh,
+              const SizedBox(
+                height: 18,
               ),
 
-              label: const Text(
-                'Coba Lagi',
+              Text(
+                'Gagal Memuat Kategori',
+
+                style:
+                    GoogleFonts.poppins(
+                  fontSize:
+                      18,
+
+                  color:
+                      darkColor,
+
+                  fontWeight:
+                      FontWeight.w800,
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(
+                height: 6,
+              ),
+
+              Text(
+                controller
+                    .errorMessage
+                    .value,
+
+                textAlign:
+                    TextAlign.center,
+
+                style:
+                    GoogleFonts.poppins(
+                  color:
+                      secondaryText,
+
+                  fontSize:
+                      11,
+
+                  height:
+                      1.5,
+                ),
+              ),
+
+              const SizedBox(
+                height: 22,
+              ),
+
+              ElevatedButton.icon(
+                onPressed:
+                    controller.loadData,
+
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      primaryColor,
+
+                  foregroundColor:
+                      Colors.white,
+
+                  elevation:
+                      0,
+
+                  padding:
+                      const EdgeInsets.symmetric(
+                    horizontal:
+                        20,
+
+                    vertical:
+                        12,
+                  ),
+
+                  shape:
+                      RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(
+                      14,
+                    ),
+                  ),
+                ),
+
+                icon:
+                    const Icon(
+                  Icons.refresh_rounded,
+                ),
+
+                label:
+                    Text(
+                  'Coba Lagi',
+
+                  style:
+                      GoogleFonts.poppins(
+                    fontWeight:
+                        FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1319,11 +2033,13 @@ class KategoriView extends GetView<KategoriController> {
   String _capitalize(
     String value,
   ) {
-    if (value.trim().isEmpty) {
-      return value;
+    if (value
+        .trim()
+        .isEmpty) {
+      return '-';
     }
 
-    final text =
+    final String text =
         value.trim();
 
     return '${text[0].toUpperCase()}'
