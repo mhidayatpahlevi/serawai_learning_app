@@ -18,6 +18,15 @@ import '../../../routes/app_routes.dart';
 
 import '../../kategori/controllers/kategori_controller.dart';
 
+// ============================================================
+// TIPE LATIHAN
+// ============================================================
+
+enum LatihanInputType {
+  pilihan,
+  ketik,
+}
+
 class LatihanController extends GetxController {
   // ============================================================
   // UI COLORS
@@ -78,11 +87,27 @@ class LatihanController extends GetxController {
   final currentIndex =
       0.obs;
 
+  // Digunakan oleh pilihan dan ketikan
   final selectedAnswer =
       ''.obs;
 
+  // Pilihan jawaban
   final displayedOptions =
       <String>[].obs;
+
+  // ============================================================
+  // INPUT KETIK
+  // ============================================================
+
+  final typedAnswer =
+      ''.obs;
+
+  final answerTextController =
+      TextEditingController();
+
+  // ============================================================
+  // STATE
+  // ============================================================
 
   final isLoading =
       false.obs;
@@ -133,7 +158,7 @@ class LatihanController extends GetxController {
       <AnswerHistoryModel>[].obs;
 
   // ============================================================
-  // GETTERS
+  // GETTER SOAL
   // ============================================================
 
   QuestionModel? get currentQuestion {
@@ -172,6 +197,10 @@ class LatihanController extends GetxController {
         questions.length - 1;
   }
 
+  // ============================================================
+  // SCORE
+  // ============================================================
+
   double get score {
     if (questions.isEmpty) {
       return 0;
@@ -185,6 +214,140 @@ class LatihanController extends GetxController {
   bool get isPassed {
     return score >=
         ProgressService.passingScore;
+  }
+
+  // ============================================================
+  // LEVEL NUMBER
+  // ============================================================
+
+  int get levelNumber {
+    final String value =
+        pantun.level
+            .toString()
+            .toLowerCase()
+            .trim();
+
+    // =========================================
+    // Ambil angka dari:
+    // "1"
+    // "Level 1"
+    // "level_15"
+    // "Tingkat 25"
+    // =========================================
+
+    final match =
+        RegExp(
+      r'\d+',
+    ).firstMatch(
+      value,
+    );
+
+    if (match != null) {
+      final int? number =
+          int.tryParse(
+        match.group(0) ?? '',
+      );
+
+      if (number != null) {
+        return number
+            .clamp(
+              1,
+              30,
+            )
+            .toInt();
+      }
+    }
+
+    // =========================================
+    // FALLBACK JIKA MASIH MENGGUNAKAN TEKS
+    // =========================================
+
+    if (value.contains('menengah') ||
+        value.contains('sedang')) {
+      return 11;
+    }
+
+    if (value.contains('mahir') ||
+        value.contains('sulit') ||
+        value.contains('lanjut')) {
+      return 21;
+    }
+
+    return 1;
+  }
+
+  // ============================================================
+  // TIPE LATIHAN
+  // ============================================================
+
+  LatihanInputType get inputType {
+    final int level =
+        levelNumber;
+
+    // =========================================
+    // LEVEL 1 - 10
+    // PILIHAN
+    // =========================================
+
+    if (level <= 10) {
+      return LatihanInputType.pilihan;
+    }
+
+    // =========================================
+    // LEVEL 11 - 20
+    // KETIK
+    // =========================================
+
+    if (level <= 20) {
+      return LatihanInputType.ketik;
+    }
+
+    // =========================================
+    // LEVEL 21 - 30
+    // CAMPURAN
+    //
+    // Soal 1 = Ketik
+    // Soal 2 = Pilihan
+    // Soal 3 = Ketik
+    // Soal 4 = Pilihan
+    // =========================================
+
+    if (currentNumber.isOdd) {
+      return LatihanInputType.ketik;
+    }
+
+    return LatihanInputType.pilihan;
+  }
+
+  bool get isPilihanMode {
+    return inputType ==
+        LatihanInputType.pilihan;
+  }
+
+  bool get isKetikMode {
+    return inputType ==
+        LatihanInputType.ketik;
+  }
+
+  bool get isMixedLevel {
+    return levelNumber >= 21 &&
+        levelNumber <= 30;
+  }
+
+  String get inputModeLabel {
+    if (levelNumber <= 10) {
+      return 'Pilihan';
+    }
+
+    if (levelNumber <= 20) {
+      return 'Ketik Jawaban';
+    }
+
+    if (isKetikMode) {
+      return 'Campuran • Ketik';
+    }
+
+    return 'Campuran • Pilihan';
   }
 
   // ============================================================
@@ -265,6 +428,14 @@ class LatihanController extends GetxController {
       progressSaved.value =
           false;
 
+      selectedAnswer.value =
+          '';
+
+      typedAnswer.value =
+          '';
+
+      answerTextController.clear();
+
       nlpResult.value =
           null;
 
@@ -289,6 +460,11 @@ class LatihanController extends GetxController {
   void _prepareCurrentQuestion() {
     selectedAnswer.value =
         '';
+
+    typedAnswer.value =
+        '';
+
+    answerTextController.clear();
 
     isAnswered.value =
         false;
@@ -318,6 +494,26 @@ class LatihanController extends GetxController {
     displayedOptions.assignAll(
       options,
     );
+
+    debugPrint(
+      '==============================',
+    );
+
+    debugPrint(
+      'LEVEL: $levelNumber',
+    );
+
+    debugPrint(
+      'SOAL: $currentNumber',
+    );
+
+    debugPrint(
+      'MODE: $inputModeLabel',
+    );
+
+    debugPrint(
+      '==============================',
+    );
   }
 
   // ============================================================
@@ -337,17 +533,57 @@ class LatihanController extends GetxController {
   }
 
   // ============================================================
+  // INPUT KETIK
+  // ============================================================
+
+  void updateTypedAnswer(
+    String value,
+  ) {
+    if (isAnswered.value ||
+        isChecking.value) {
+      return;
+    }
+
+    typedAnswer.value =
+        value;
+
+    selectedAnswer.value =
+        value.trim();
+  }
+
+  void clearTypedAnswer() {
+    if (isAnswered.value ||
+        isChecking.value) {
+      return;
+    }
+
+    typedAnswer.value =
+        '';
+
+    selectedAnswer.value =
+        '';
+
+    answerTextController.clear();
+  }
+
+  // ============================================================
   // ANALISIS NLP
   // ============================================================
 
   Future<void> checkAnswer() async {
     if (selectedAnswer
         .value
+        .trim()
         .isEmpty) {
       Get.snackbar(
-        'Pilih jawaban',
-        'Silakan pilih salah satu '
-            'jawaban terlebih dahulu.',
+        isKetikMode
+            ? 'Tulis jawaban'
+            : 'Pilih jawaban',
+
+        isKetikMode
+            ? 'Silakan tulis jawaban terlebih dahulu.'
+            : 'Silakan pilih salah satu jawaban terlebih dahulu.',
+
         snackPosition:
             SnackPosition.BOTTOM,
       );
@@ -371,9 +607,9 @@ class LatihanController extends GetxController {
       isChecking.value =
           true;
 
-      // ========================================================
-      // KIRIM KE NLP BACKEND
-      // ========================================================
+      // =========================================
+      // NLP
+      // =========================================
 
       final result =
           await _nlpService
@@ -382,7 +618,9 @@ class LatihanController extends GetxController {
             question.template,
 
         userAnswer:
-            selectedAnswer.value,
+            selectedAnswer
+                .value
+                .trim(),
 
         referenceAnswer:
             question.referenceAnswer,
@@ -390,10 +628,6 @@ class LatihanController extends GetxController {
         targetRhyme:
             question.targetRhyme,
       );
-
-      // ========================================================
-      // SIMPAN HASIL NLP
-      // ========================================================
 
       nlpResult.value =
           result;
@@ -404,9 +638,9 @@ class LatihanController extends GetxController {
       isAnswered.value =
           true;
 
-      // ========================================================
-      // HITUNG BENAR / SALAH
-      // ========================================================
+      // =========================================
+      // BENAR / SALAH
+      // =========================================
 
       if (result.isCorrect) {
         correctCount.value++;
@@ -414,9 +648,9 @@ class LatihanController extends GetxController {
         wrongCount.value++;
       }
 
-      // ========================================================
-      // SIMPAN DETAIL JAWABAN
-      // ========================================================
+      // =========================================
+      // HISTORY
+      // =========================================
 
       answerHistory.add(
         AnswerHistoryModel(
@@ -427,7 +661,9 @@ class LatihanController extends GetxController {
               question.lineIndex,
 
           selectedAnswer:
-              selectedAnswer.value,
+              selectedAnswer
+                  .value
+                  .trim(),
 
           referenceAnswer:
               question.referenceAnswer,
@@ -452,9 +688,9 @@ class LatihanController extends GetxController {
         ),
       );
 
-      // ========================================================
+      // =========================================
       // DEBUG
-      // ========================================================
+      // =========================================
 
       debugPrint(
         '==============================',
@@ -462,6 +698,14 @@ class LatihanController extends GetxController {
 
       debugPrint(
         'HASIL ANALISIS NLP',
+      );
+
+      debugPrint(
+        'Level       : $levelNumber',
+      );
+
+      debugPrint(
+        'Mode        : $inputModeLabel',
       );
 
       debugPrint(
@@ -565,9 +809,9 @@ class LatihanController extends GetxController {
       isSavingResult.value =
           true;
 
-      // ========================================================
-      // 1. SIMPAN HISTORY
-      // ========================================================
+      // =========================================
+      // SIMPAN HISTORY
+      // =========================================
 
       if (!resultSaved.value) {
         final history =
@@ -613,9 +857,9 @@ class LatihanController extends GetxController {
         );
       }
 
-      // ========================================================
-      // 2. UPDATE PROGRESS
-      // ========================================================
+      // =========================================
+      // UPDATE PROGRESS
+      // =========================================
 
       if (!progressSaved.value) {
         await _progressService
@@ -644,39 +888,8 @@ class LatihanController extends GetxController {
           'berhasil diperbarui.',
         );
 
-        // ======================================================
-        // 3. REFRESH KATEGORI
-        // ======================================================
-
         await _refreshKategori();
-
-        debugPrint(
-          'Progress pantun '
-          'berhasil diperbarui.',
-        );
-
-        debugPrint(
-          'Kategori : '
-          '${category.id}',
-        );
-
-        debugPrint(
-          'Pantun   : '
-          '${pantun.id}',
-        );
-
-        debugPrint(
-          'Nilai    : $score',
-        );
-
-        debugPrint(
-          'Lulus    : $isPassed',
-        );
       }
-
-      // ========================================================
-      // 4. TAMPILKAN HASIL
-      // ========================================================
 
       showResult();
     } catch (e) {
@@ -716,18 +929,7 @@ class LatihanController extends GetxController {
             .loadData();
 
         debugPrint(
-          'KategoriController '
-          'berhasil di-refresh.',
-        );
-
-        debugPrint(
-          'Kategori terbuka sampai: '
-          '${kategoriController.highestUnlockedCategory.value}',
-        );
-      } else {
-        debugPrint(
-          'KategoriController '
-          'tidak sedang aktif.',
+          'KategoriController berhasil di-refresh.',
         );
       }
     } catch (e) {
@@ -738,7 +940,7 @@ class LatihanController extends GetxController {
   }
 
   // ============================================================
-  // TAMPILKAN HASIL
+  // RESULT
   // ============================================================
 
   void showResult() {
@@ -768,14 +970,15 @@ class LatihanController extends GetxController {
         child: Container(
           constraints: BoxConstraints(
             maxWidth: 520,
-
             maxHeight:
                 Get.height *
-                0.90,
+                    0.90,
           ),
 
-          decoration: BoxDecoration(
-            color: const Color(
+          decoration:
+              BoxDecoration(
+            color:
+                const Color(
               0xFFFCFEFF,
             ),
 
@@ -792,9 +995,11 @@ class LatihanController extends GetxController {
                   0.18,
                 ),
 
-                blurRadius: 35,
+                blurRadius:
+                    35,
 
-                offset: const Offset(
+                offset:
+                    const Offset(
                   0,
                   15,
                 ),
@@ -802,96 +1007,603 @@ class LatihanController extends GetxController {
             ],
           ),
 
-          child: ClipRRect(
-            borderRadius:
-                BorderRadius.circular(
-              30,
+          child:
+              SingleChildScrollView(
+            padding:
+                const EdgeInsets.all(
+              18,
             ),
 
-            child:
-                SingleChildScrollView(
-              physics:
-                  const BouncingScrollPhysics(),
+            child: Column(
+              mainAxisSize:
+                  MainAxisSize.min,
 
-              padding:
-                  const EdgeInsets.fromLTRB(
-                18,
-                18,
-                18,
-                20,
-              ),
+              children: [
+                // =============================================
+                // HEADER
+                // =============================================
 
-              child: Column(
-                mainAxisSize:
-                    MainAxisSize.min,
+                Container(
+                  width:
+                      double.infinity,
 
-                children: [
-                  // =============================================
-                  // HEADER
-                  // =============================================
-
-                  _buildResultHeader(),
-
-                  const SizedBox(
-                    height: 16,
+                  padding:
+                      const EdgeInsets.all(
+                    16,
                   ),
 
-                  // =============================================
-                  // SCORE
-                  // =============================================
-
-                  _buildScoreCard(
-                    accuracy:
-                        accuracy,
-
-                    scoreColor:
-                        scoreColor,
-                  ),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  // =============================================
-                  // STATUS
-                  // =============================================
-
-                  _buildPassedCard(),
-
-                  // =============================================
-                  // SAVED INFORMATION
-                  // =============================================
-
-                  if (resultSaved.value ||
-                      progressSaved.value) ...[
-                    const SizedBox(
-                      height: 12,
+                  decoration:
+                      BoxDecoration(
+                    gradient:
+                        const LinearGradient(
+                      colors: [
+                        Color(
+                          0xFFE8FAFC,
+                        ),
+                        Color(
+                          0xFFF0FBF7,
+                        ),
+                      ],
                     ),
 
-                    _buildSavedInformation(),
+                    borderRadius:
+                        BorderRadius.circular(
+                      22,
+                    ),
+                  ),
+
+                  child: Row(
+                    children: [
+                      Container(
+                        width:
+                            70,
+
+                        height:
+                            70,
+
+                        decoration:
+                            const BoxDecoration(
+                          color:
+                              Color(
+                            0xFFFFF3D2,
+                          ),
+
+                          shape:
+                              BoxShape.circle,
+                        ),
+
+                        child:
+                            Icon(
+                          isPassed
+                              ? Icons
+                                  .emoji_events_rounded
+                              : Icons
+                                  .lightbulb_rounded,
+
+                          color:
+                              isPassed
+                                  ? warningColor
+                                  : errorColor,
+
+                          size:
+                              40,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        width: 12,
+                      ),
+
+                      Expanded(
+                        child:
+                            Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+
+                          children: [
+                            Text(
+                              isPassed
+                                  ? 'Hebat! 🎉'
+                                  : 'Tetap Semangat! 💪',
+
+                              style:
+                                  GoogleFonts.poppins(
+                                color:
+                                    primaryColor,
+
+                                fontSize:
+                                    10,
+
+                                fontWeight:
+                                    FontWeight.w700,
+                              ),
+                            ),
+
+                            Text(
+                              'Latihan Selesai!',
+
+                              style:
+                                  GoogleFonts.poppins(
+                                color:
+                                    darkColor,
+
+                                fontSize:
+                                    20,
+
+                                fontWeight:
+                                    FontWeight.w800,
+                              ),
+                            ),
+
+                            Text(
+                              pantun.judul,
+
+                              maxLines:
+                                  2,
+
+                              overflow:
+                                  TextOverflow.ellipsis,
+
+                              style:
+                                  GoogleFonts.poppins(
+                                color:
+                                    secondaryText,
+
+                                fontSize:
+                                    10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 15,
+                ),
+
+                // =============================================
+                // SCORE
+                // =============================================
+
+                Container(
+                  width:
+                      double.infinity,
+
+                  padding:
+                      const EdgeInsets.all(
+                    16,
+                  ),
+
+                  decoration:
+                      BoxDecoration(
+                    color:
+                        Colors.white,
+
+                    borderRadius:
+                        BorderRadius.circular(
+                      22,
+                    ),
+
+                    border:
+                        Border.all(
+                      color:
+                          const Color(
+                        0xFFE8EFF1,
+                      ),
+                    ),
+                  ),
+
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                                Text(
+                              'Hasil Latihan',
+
+                              style:
+                                  GoogleFonts.poppins(
+                                color:
+                                    darkColor,
+
+                                fontSize:
+                                    14,
+
+                                fontWeight:
+                                    FontWeight.w700,
+                              ),
+                            ),
+                          ),
+
+                          Text(
+                            _getScoreLabel(
+                              score,
+                            ),
+
+                            style:
+                                GoogleFonts.poppins(
+                              color:
+                                  scoreColor,
+
+                              fontWeight:
+                                  FontWeight.w700,
+
+                              fontSize:
+                                  10,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(
+                        height: 15,
+                      ),
+
+                      Text(
+                        score
+                            .toStringAsFixed(
+                          0,
+                        ),
+
+                        style:
+                            GoogleFonts.poppins(
+                          color:
+                              scoreColor,
+
+                          fontSize:
+                              42,
+
+                          fontWeight:
+                              FontWeight.w800,
+                        ),
+                      ),
+
+                      Text(
+                        'dari 100',
+
+                        style:
+                            GoogleFonts.poppins(
+                          color:
+                              secondaryText,
+
+                          fontSize:
+                              10,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 15,
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                                _buildResultStat(
+                              title:
+                                  'Soal',
+
+                              value:
+                                  '${questions.length}',
+
+                              color:
+                                  blueColor,
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Expanded(
+                            child:
+                                _buildResultStat(
+                              title:
+                                  'Benar',
+
+                              value:
+                                  '${correctCount.value}',
+
+                              color:
+                                  successColor,
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Expanded(
+                            child:
+                                _buildResultStat(
+                              title:
+                                  'Salah',
+
+                              value:
+                                  '${wrongCount.value}',
+
+                              color:
+                                  errorColor,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(
+                        height: 14,
+                      ),
+
+                      LinearProgressIndicator(
+                        value:
+                            (accuracy /
+                                    100)
+                                .clamp(
+                                  0.0,
+                                  1.0,
+                                )
+                                .toDouble(),
+
+                        minHeight:
+                            8,
+
+                        color:
+                            primaryColor,
+
+                        backgroundColor:
+                            const Color(
+                          0xFFDCEBEA,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 5,
+                      ),
+
+                      Text(
+                        'Akurasi ${accuracy.toStringAsFixed(0)}%',
+
+                        style:
+                            GoogleFonts.poppins(
+                          fontSize:
+                              9,
+
+                          color:
+                              secondaryText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 12,
+                ),
+
+                // =============================================
+                // STATUS
+                // =============================================
+
+                Container(
+                  width:
+                      double.infinity,
+
+                  padding:
+                      const EdgeInsets.all(
+                    14,
+                  ),
+
+                  decoration:
+                      BoxDecoration(
+                    color:
+                        isPassed
+                            ? const Color(
+                                0xFFEAF9EF,
+                              )
+                            : const Color(
+                                0xFFFFF5DF,
+                              ),
+
+                    borderRadius:
+                        BorderRadius.circular(
+                      18,
+                    ),
+                  ),
+
+                  child: Row(
+                    children: [
+                      Icon(
+                        isPassed
+                            ? Icons
+                                .check_circle_rounded
+                            : Icons
+                                .info_rounded,
+
+                        color:
+                            isPassed
+                                ? successColor
+                                : warningColor,
+
+                        size:
+                            35,
+                      ),
+
+                      const SizedBox(
+                        width: 10,
+                      ),
+
+                      Expanded(
+                        child:
+                            Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+
+                          children: [
+                            Text(
+                              isPassed
+                                  ? 'Selamat! Kamu Lulus!'
+                                  : 'Belum Lulus',
+
+                              style:
+                                  GoogleFonts.poppins(
+                                fontSize:
+                                    13,
+
+                                fontWeight:
+                                    FontWeight.w700,
+
+                                color:
+                                    darkColor,
+                              ),
+                            ),
+
+                            Text(
+                              isPassed
+                                  ? 'Pantun telah berhasil diselesaikan.'
+                                  : 'Nilai minimal kelulusan '
+                                      '${ProgressService.passingScore.toStringAsFixed(0)}.',
+
+                              style:
+                                  GoogleFonts.poppins(
+                                fontSize:
+                                    9,
+
+                                color:
+                                    secondaryText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 16,
+                ),
+
+                // =============================================
+                // BUTTON
+                // =============================================
+
+                SizedBox(
+                  width:
+                      double.infinity,
+
+                  height:
+                      50,
+
+                  child:
+                      ElevatedButton.icon(
+                    onPressed:
+                        backToCategory,
+
+                    style:
+                        ElevatedButton.styleFrom(
+                      backgroundColor:
+                          primaryColor,
+
+                      foregroundColor:
+                          Colors.white,
+
+                      elevation:
+                          0,
+
+                      shape:
+                          RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(
+                          15,
+                        ),
+                      ),
+                    ),
+
+                    icon:
+                        const Icon(
+                      Icons
+                          .category_rounded,
+                    ),
+
+                    label:
+                        Text(
+                      'Ke Kategori',
+
+                      style:
+                          GoogleFonts.poppins(
+                        fontWeight:
+                            FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 8,
+                ),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child:
+                          OutlinedButton.icon(
+                        onPressed:
+                            () {
+                          Get.back();
+
+                          restartQuiz();
+                        },
+
+                        icon:
+                            const Icon(
+                          Icons
+                              .refresh_rounded,
+                        ),
+
+                        label:
+                            const Text(
+                          'Ulangi',
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      width: 8,
+                    ),
+
+                    Expanded(
+                      child:
+                          OutlinedButton.icon(
+                        onPressed:
+                            () {
+                          Get.back();
+
+                          Get.offNamed(
+                            Routes.materi,
+
+                            arguments:
+                                pantun,
+                          );
+                        },
+
+                        icon:
+                            const Icon(
+                          Icons
+                              .menu_book_rounded,
+                        ),
+
+                        label:
+                            const Text(
+                          'Materi',
+                        ),
+                      ),
+                    ),
                   ],
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  // =============================================
-                  // QUOTE
-                  // =============================================
-
-                  _buildResultQuote(),
-
-                  const SizedBox(
-                    height: 18,
-                  ),
-
-                  // =============================================
-                  // BUTTON
-                  // =============================================
-
-                  _buildResultButtons(),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -903,704 +1615,27 @@ class LatihanController extends GetxController {
   }
 
   // ============================================================
-  // RESULT HEADER
-  // ============================================================
-
-  Widget _buildResultHeader() {
-    return Container(
-      width:
-          double.infinity,
-
-      padding:
-          const EdgeInsets.all(
-        14,
-      ),
-
-      decoration:
-          BoxDecoration(
-        gradient:
-            const LinearGradient(
-          colors: [
-            Color(
-              0xFFE8FAFC,
-            ),
-
-            Color(
-              0xFFF0FBF7,
-            ),
-          ],
-
-          begin:
-              Alignment.topLeft,
-
-          end:
-              Alignment.bottomRight,
-        ),
-
-        borderRadius:
-            BorderRadius.circular(
-          24,
-        ),
-      ),
-
-      child: Row(
-        children: [
-          // ====================================================
-          // TROPHY
-          // ====================================================
-
-          Container(
-            width:
-                78,
-
-            height:
-                78,
-
-            decoration:
-                const BoxDecoration(
-              color:
-                  Color(
-                0xFFFFF3D2,
-              ),
-
-              shape:
-                  BoxShape.circle,
-            ),
-
-            child: Stack(
-              alignment:
-                  Alignment.center,
-
-              children: [
-                const Icon(
-                  Icons
-                      .emoji_events_rounded,
-
-                  color:
-                      warningColor,
-
-                  size:
-                      46,
-                ),
-
-                if (isPassed)
-                  Positioned(
-                    right:
-                        2,
-
-                    top:
-                        3,
-
-                    child:
-                        Container(
-                      width:
-                          25,
-
-                      height:
-                          25,
-
-                      decoration:
-                          const BoxDecoration(
-                        color:
-                            successColor,
-
-                        shape:
-                            BoxShape.circle,
-                      ),
-
-                      child:
-                          const Icon(
-                        Icons
-                            .check_rounded,
-
-                        color:
-                            Colors.white,
-
-                        size:
-                            16,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          const SizedBox(
-            width: 13,
-          ),
-
-          // ====================================================
-          // TITLE
-          // ====================================================
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
-                  ),
-
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        const Color(
-                      0xFFDDF5F1,
-                    ),
-
-                    borderRadius:
-                        BorderRadius.circular(
-                      20,
-                    ),
-                  ),
-
-                  child: Text(
-                    isPassed
-                        ? 'Hebat! 🎉'
-                        : 'Tetap Semangat! 💪',
-
-                    style:
-                        GoogleFonts.poppins(
-                      color:
-                          primaryColor,
-
-                      fontSize:
-                          9,
-
-                      fontWeight:
-                          FontWeight.w700,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 5,
-                ),
-
-                Text(
-                  'Latihan Selesai!',
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        darkColor,
-
-                    fontSize:
-                        20,
-
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 3,
-                ),
-
-                Text(
-                  pantun.judul,
-
-                  maxLines:
-                      2,
-
-                  overflow:
-                      TextOverflow.ellipsis,
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        secondaryText,
-
-                    fontSize:
-                        10,
-
-                    height:
-                        1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // SCORE CARD
-  // ============================================================
-
-  Widget _buildScoreCard({
-    required double accuracy,
-    required Color scoreColor,
-  }) {
-    return Container(
-      width:
-          double.infinity,
-
-      padding:
-          const EdgeInsets.all(
-        15,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            Colors.white,
-
-        borderRadius:
-            BorderRadius.circular(
-          23,
-        ),
-
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xFFE9F0F2,
-          ),
-        ),
-
-        boxShadow: [
-          BoxShadow(
-            color:
-                Colors.black
-                    .withOpacity(
-              0.035,
-            ),
-
-            blurRadius:
-                10,
-
-            offset:
-                const Offset(
-              0,
-              4,
-            ),
-          ),
-        ],
-      ),
-
-      child: Column(
-        children: [
-          // ====================================================
-          // HEADER
-          // ====================================================
-
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Hasil Latihan',
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        darkColor,
-
-                    fontSize:
-                        14,
-
-                    fontWeight:
-                        FontWeight.w700,
-                  ),
-                ),
-              ),
-
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal:
-                      9,
-
-                  vertical:
-                      5,
-                ),
-
-                decoration:
-                    BoxDecoration(
-                  color:
-                      scoreColor
-                          .withOpacity(
-                    0.12,
-                  ),
-
-                  borderRadius:
-                      BorderRadius.circular(
-                    20,
-                  ),
-                ),
-
-                child: Row(
-                  mainAxisSize:
-                      MainAxisSize.min,
-
-                  children: [
-                    Icon(
-                      Icons.star_rounded,
-
-                      color:
-                          scoreColor,
-
-                      size:
-                          15,
-                    ),
-
-                    const SizedBox(
-                      width: 3,
-                    ),
-
-                    Text(
-                      _getScoreLabel(
-                        score,
-                      ),
-
-                      style:
-                          GoogleFonts.poppins(
-                        color:
-                            scoreColor,
-
-                        fontSize:
-                            8,
-
-                        fontWeight:
-                            FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: 16,
-          ),
-
-          // ====================================================
-          // SCORE & STAT
-          // ====================================================
-
-          Row(
-            children: [
-              // =================================================
-              // CIRCLE SCORE
-              // =================================================
-
-              SizedBox(
-                width:
-                    105,
-
-                height:
-                    105,
-
-                child: Stack(
-                  alignment:
-                      Alignment.center,
-
-                  children: [
-                    SizedBox(
-                      width:
-                          98,
-
-                      height:
-                          98,
-
-                      child:
-                          CircularProgressIndicator(
-                        value:
-                            (score / 100)
-                                .clamp(
-                                  0.0,
-                                  1.0,
-                                )
-                                .toDouble(),
-
-                        strokeWidth:
-                            9,
-
-                        backgroundColor:
-                            const Color(
-                          0xFFE1ECEB,
-                        ),
-
-                        valueColor:
-                            AlwaysStoppedAnimation<
-                                Color>(
-                          scoreColor,
-                        ),
-                      ),
-                    ),
-
-                    Column(
-                      mainAxisSize:
-                          MainAxisSize.min,
-
-                      children: [
-                        Text(
-                          score
-                              .toStringAsFixed(
-                            0,
-                          ),
-
-                          style:
-                              GoogleFonts.poppins(
-                            color:
-                                darkColor,
-
-                            fontSize:
-                                27,
-
-                            height:
-                                1,
-
-                            fontWeight:
-                                FontWeight.w800,
-                          ),
-                        ),
-
-                        Text(
-                          '/100',
-
-                          style:
-                              GoogleFonts.poppins(
-                            color:
-                                secondaryText,
-
-                            fontSize:
-                                9,
-
-                            fontWeight:
-                                FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(
-                width: 10,
-              ),
-
-              // =================================================
-              // STAT
-              // =================================================
-
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child:
-                          _buildResultStat(
-                        icon:
-                            Icons
-                                .quiz_rounded,
-
-                        value:
-                            '${questions.length}',
-
-                        label:
-                            'Soal',
-
-                        color:
-                            blueColor,
-
-                        background:
-                            const Color(
-                          0xFFE9F5FC,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(
-                      width: 5,
-                    ),
-
-                    Expanded(
-                      child:
-                          _buildResultStat(
-                        icon:
-                            Icons
-                                .check_circle_rounded,
-
-                        value:
-                            '${correctCount.value}',
-
-                        label:
-                            'Benar',
-
-                        color:
-                            successColor,
-
-                        background:
-                            const Color(
-                          0xFFEAF8EE,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(
-                      width: 5,
-                    ),
-
-                    Expanded(
-                      child:
-                          _buildResultStat(
-                        icon:
-                            Icons
-                                .cancel_rounded,
-
-                        value:
-                            '${wrongCount.value}',
-
-                        label:
-                            'Salah',
-
-                        color:
-                            errorColor,
-
-                        background:
-                            const Color(
-                          0xFFFFECEE,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: 15,
-          ),
-
-          // ====================================================
-          // ACCURACY
-          // ====================================================
-
-          Row(
-            children: [
-              const Icon(
-                Icons
-                    .track_changes_rounded,
-
-                color:
-                    primaryColor,
-
-                size:
-                    18,
-              ),
-
-              const SizedBox(
-                width: 6,
-              ),
-
-              Text(
-                'Akurasi Jawaban',
-
-                style:
-                    GoogleFonts.poppins(
-                  color:
-                      darkColor,
-
-                  fontSize:
-                      10,
-
-                  fontWeight:
-                      FontWeight.w600,
-                ),
-              ),
-
-              const Spacer(),
-
-              Text(
-                '${accuracy.toStringAsFixed(0)}%',
-
-                style:
-                    GoogleFonts.poppins(
-                  color:
-                      primaryColor,
-
-                  fontSize:
-                      11,
-
-                  fontWeight:
-                      FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: 7,
-          ),
-
-          ClipRRect(
-            borderRadius:
-                BorderRadius.circular(
-              20,
-            ),
-
-            child:
-                LinearProgressIndicator(
-              value:
-                  (accuracy / 100)
-                      .clamp(
-                        0.0,
-                        1.0,
-                      )
-                      .toDouble(),
-
-              minHeight:
-                  8,
-
-              backgroundColor:
-                  const Color(
-                0xFFDCEBEA,
-              ),
-
-              valueColor:
-                  const AlwaysStoppedAnimation<
-                      Color>(
-                primaryColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
   // RESULT STAT
   // ============================================================
 
   Widget _buildResultStat({
-    required IconData icon,
+    required String title,
     required String value,
-    required String label,
     required Color color,
-    required Color background,
   }) {
     return Container(
       padding:
           const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 3,
+        vertical:
+            10,
       ),
 
       decoration:
           BoxDecoration(
         color:
-            background,
+            color.withOpacity(
+          0.10,
+        ),
 
         borderRadius:
             BorderRadius.circular(
@@ -1610,28 +1645,16 @@ class LatihanController extends GetxController {
 
       child: Column(
         children: [
-          Icon(
-            icon,
-            color:
-                color,
-            size:
-                18,
-          ),
-
-          const SizedBox(
-            height: 2,
-          ),
-
           Text(
             value,
 
             style:
                 GoogleFonts.poppins(
               color:
-                  darkColor,
+                  color,
 
               fontSize:
-                  18,
+                  22,
 
               fontWeight:
                   FontWeight.w800,
@@ -1639,667 +1662,22 @@ class LatihanController extends GetxController {
           ),
 
           Text(
-            label,
+            title,
 
             style:
                 GoogleFonts.poppins(
-              color:
-                  secondaryText,
-
-              fontSize:
-                  7,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // STATUS LULUS
-  // ============================================================
-
-  Widget _buildPassedCard() {
-    final Color color =
-        isPassed
-            ? successColor
-            : warningColor;
-
-    final Color background =
-        isPassed
-            ? const Color(
-                0xFFEAF9EF,
-              )
-            : const Color(
-                0xFFFFF5DF,
-              );
-
-    return Container(
-      width:
-          double.infinity,
-
-      padding:
-          const EdgeInsets.all(
-        14,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            background,
-
-        borderRadius:
-            BorderRadius.circular(
-          20,
-        ),
-      ),
-
-      child: Row(
-        children: [
-          Container(
-            width:
-                50,
-
-            height:
-                50,
-
-            decoration:
-                BoxDecoration(
-              color:
-                  Colors.white
-                      .withOpacity(
-                0.80,
-              ),
-
-              shape:
-                  BoxShape.circle,
-            ),
-
-            child: Icon(
-              isPassed
-                  ? Icons
-                      .emoji_events_rounded
-                  : Icons
-                      .lightbulb_rounded,
-
               color:
                   color,
 
-              size:
-                  28,
-            ),
-          ),
-
-          const SizedBox(
-            width: 12,
-          ),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-                Text(
-                  isPassed
-                      ? 'Selamat! Kamu Lulus!'
-                      : 'Belum Lulus, Coba Lagi!',
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        isPassed
-                            ? const Color(
-                                0xFF24834B,
-                              )
-                            : const Color(
-                                0xFFB47718,
-                              ),
-
-                    fontSize:
-                        13,
-
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 3,
-                ),
-
-                Text(
-                  isPassed
-                      ? category.totalPantun == 1
-                          ? 'Pantun ini telah diselesaikan. '
-                              'Kategori berikutnya akan terbuka '
-                              'jika seluruh syarat terpenuhi.'
-                          : 'Pantun ini telah diselesaikan. '
-                              'Lanjutkan pantun berikutnya '
-                              'untuk menyelesaikan kategori.'
-                      : 'Nilai minimal kelulusan adalah '
-                          '${ProgressService.passingScore.toStringAsFixed(0)}. '
-                          'Pelajari kembali pantunnya lalu coba lagi.',
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        secondaryText,
-
-                    fontSize:
-                        9,
-
-                    height:
-                        1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // SAVED INFORMATION
-  // ============================================================
-
-  Widget _buildSavedInformation() {
-    return Container(
-      width:
-          double.infinity,
-
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal:
-            13,
-
-        vertical:
-            12,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(
-          0xFFF1F9F8,
-        ),
-
-        borderRadius:
-            BorderRadius.circular(
-          18,
-        ),
-
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xFFDCEFEB,
-          ),
-        ),
-      ),
-
-      child: Column(
-        children: [
-          if (resultSaved.value)
-            _buildSavedRow(
-              icon:
-                  Icons.history_rounded,
-
-              text:
-                  'Riwayat latihan berhasil disimpan.',
-            ),
-
-          if (resultSaved.value &&
-              progressSaved.value)
-            const SizedBox(
-              height: 8,
-            ),
-
-          if (progressSaved.value)
-            _buildSavedRow(
-              icon:
-                  Icons
-                      .trending_up_rounded,
-
-              text:
-                  'Progres belajar berhasil diperbarui.',
-            ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // SAVED ROW
-  // ============================================================
-
-  Widget _buildSavedRow({
-    required IconData icon,
-    required String text,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width:
-              27,
-
-          height:
-              27,
-
-          decoration:
-              const BoxDecoration(
-            color:
-                Color(
-              0xFFDDF5EE,
-            ),
-
-            shape:
-                BoxShape.circle,
-          ),
-
-          child: Icon(
-            icon,
-
-            color:
-                successColor,
-
-            size:
-                15,
-          ),
-        ),
-
-        const SizedBox(
-          width: 8,
-        ),
-
-        Expanded(
-          child: Text(
-            text,
-
-            style:
-                GoogleFonts.poppins(
-              color:
-                  const Color(
-                0xFF4D6D67,
-              ),
-
               fontSize:
-                  9,
+                  10,
 
               fontWeight:
-                  FontWeight.w500,
-            ),
-          ),
-        ),
-
-        const Icon(
-          Icons.check_circle_rounded,
-
-          color:
-              successColor,
-
-          size:
-              17,
-        ),
-      ],
-    );
-  }
-
-  // ============================================================
-  // RESULT QUOTE
-  // ============================================================
-
-  Widget _buildResultQuote() {
-    return Container(
-      width:
-          double.infinity,
-
-      padding:
-          const EdgeInsets.all(
-        13,
-      ),
-
-      decoration:
-          BoxDecoration(
-        gradient:
-            const LinearGradient(
-          colors: [
-            Color(
-              0xFFE9F7FC,
-            ),
-
-            Color(
-              0xFFF0FAF8,
-            ),
-          ],
-        ),
-
-        borderRadius:
-            BorderRadius.circular(
-          18,
-        ),
-      ),
-
-      child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-        children: [
-          const Icon(
-            Icons
-                .format_quote_rounded,
-
-            color:
-                Color(
-              0xFF7695B1,
-            ),
-
-            size:
-                27,
-          ),
-
-          const SizedBox(
-            width: 8,
-          ),
-
-          Expanded(
-            child: Text(
-              isPassed
-                  ? 'Hebat! Terus belajar pantun Serawai '
-                      'dan ikut melestarikan bahasa untuk '
-                      'generasi berikutnya.'
-                  : 'Jangan menyerah. Setiap kesalahan '
-                      'adalah bagian dari proses belajar.',
-
-              style:
-                  GoogleFonts.poppins(
-                color:
-                    const Color(
-                  0xFF57718A,
-                ),
-
-                fontSize:
-                    9,
-
-                height:
-                    1.5,
-
-                fontStyle:
-                    FontStyle.italic,
-              ),
+                  FontWeight.w600,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  // ============================================================
-  // RESULT BUTTONS
-  // ============================================================
-
-  Widget _buildResultButtons() {
-    return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.stretch,
-
-      children: [
-        // ======================================================
-        // KE KATEGORI
-        // ======================================================
-
-        SizedBox(
-          height:
-              52,
-
-          child:
-              ElevatedButton(
-          
-onPressed: () => Get.offAllNamed(Routes.pantunDetail),
-
-            style:
-                ElevatedButton.styleFrom(
-              backgroundColor:
-                  primaryColor,
-
-              foregroundColor:
-                  Colors.white,
-
-              elevation:
-                  0,
-
-              shape:
-                  RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  16,
-                ),
-              ),
-            ),
-
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
-
-              children: [
-                const Icon(
-                  Icons.category_rounded,
-
-                  size:
-                      20,
-                ),
-
-                const SizedBox(
-                  width: 8,
-                ),
-
-                Text(
-                  'Ke Kategori',
-
-                  style:
-                      GoogleFonts.poppins(
-                    fontSize:
-                        12,
-
-                    fontWeight:
-                        FontWeight.w700,
-                  ),
-                ),
-
-                const SizedBox(
-                  width: 7,
-                ),
-
-                const Icon(
-                  Icons
-                      .arrow_forward_rounded,
-
-                  size:
-                      18,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(
-          height: 9,
-        ),
-
-        Row(
-          children: [
-            // ==================================================
-            // ULANGI
-            // ==================================================
-
-            Expanded(
-              child: SizedBox(
-                height:
-                    48,
-
-                child:
-                    OutlinedButton(
-                  onPressed: () {
-                    Get.back();
-
-                    restartQuiz();
-                  },
-
-                  style:
-                      OutlinedButton.styleFrom(
-                    foregroundColor:
-                        primaryColor,
-
-                    side:
-                        const BorderSide(
-                      color:
-                          primaryColor,
-                    ),
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        15,
-                      ),
-                    ),
-                  ),
-
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
-
-                    children: [
-                      const Icon(
-                        Icons.refresh_rounded,
-
-                        size:
-                            18,
-                      ),
-
-                      const SizedBox(
-                        width: 5,
-                      ),
-
-                      Text(
-                        'Ulangi',
-
-                        style:
-                            GoogleFonts.poppins(
-                          fontSize:
-                              10,
-
-                          fontWeight:
-                              FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(
-              width: 8,
-            ),
-
-            // ==================================================
-            // TERJEMAHAN
-            // ==================================================
-
-            Expanded(
-              child: SizedBox(
-                height:
-                    48,
-
-                child:
-                    OutlinedButton(
-                  onPressed: () {
-                    Get.back();
-
-                    Get.offNamed(
-                      Routes.materi,
-
-                      arguments:
-                          pantun,
-                    );
-                  },
-
-                  style:
-                      OutlinedButton.styleFrom(
-                    foregroundColor:
-                        const Color(
-                      0xFF4E83AE,
-                    ),
-
-                    backgroundColor:
-                        const Color(
-                      0xFFF0F7FC,
-                    ),
-
-                    side:
-                        const BorderSide(
-                      color:
-                          Color(
-                        0xFFBFD8EA,
-                      ),
-                    ),
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        15,
-                      ),
-                    ),
-                  ),
-
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
-
-                    children: [
-                      const Icon(
-                        Icons.menu_book_rounded,
-
-                        size:
-                            18,
-                      ),
-
-                      const SizedBox(
-                        width: 5,
-                      ),
-
-                      Flexible(
-                        child: Text(
-                          'Terjemahan',
-
-                          maxLines:
-                              1,
-
-                          overflow:
-                              TextOverflow.ellipsis,
-
-                          style:
-                              GoogleFonts.poppins(
-                            fontSize:
-                                10,
-
-                            fontWeight:
-                                FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -2321,10 +1699,6 @@ onPressed: () => Get.offAllNamed(Routes.pantunDetail),
     return errorColor;
   }
 
-  // ============================================================
-  // SCORE LABEL
-  // ============================================================
-
   String _getScoreLabel(
     double value,
   ) {
@@ -2344,21 +1718,18 @@ onPressed: () => Get.offAllNamed(Routes.pantunDetail),
   }
 
   // ============================================================
-  // KEMBALI KE HALAMAN KATEGORI
+  // BACK TO CATEGORY
   // ============================================================
 
   Future<void> backToCategory() async {
-    // Tutup dialog
     Get.back();
 
-    // Kembali sampai halaman kategori
     Get.until(
       (route) =>
           route.settings.name ==
           Routes.kategori,
     );
 
-    // Refresh data kategori
     if (Get.isRegistered<
         KategoriController>()) {
       final kategoriController =
@@ -2367,20 +1738,11 @@ onPressed: () => Get.offAllNamed(Routes.pantunDetail),
 
       await kategoriController
           .loadData();
-
-      debugPrint(
-        'Kembali ke kategori.',
-      );
-
-      debugPrint(
-        'Kategori terbuka sampai: '
-        '${kategoriController.highestUnlockedCategory.value}',
-      );
     }
   }
 
   // ============================================================
-  // ULANGI LATIHAN
+  // RESTART
   // ============================================================
 
   void restartQuiz() {
@@ -2404,6 +1766,11 @@ onPressed: () => Get.offAllNamed(Routes.pantunDetail),
     selectedAnswer.value =
         '';
 
+    typedAnswer.value =
+        '';
+
+    answerTextController.clear();
+
     isAnswered.value =
         false;
 
@@ -2414,5 +1781,16 @@ onPressed: () => Get.offAllNamed(Routes.pantunDetail),
         null;
 
     _prepareCurrentQuestion();
+  }
+
+  // ============================================================
+  // DISPOSE
+  // ============================================================
+
+  @override
+  void onClose() {
+    answerTextController.dispose();
+
+    super.onClose();
   }
 }

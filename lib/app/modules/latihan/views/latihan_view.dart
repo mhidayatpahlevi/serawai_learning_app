@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../controllers/latihan_controller.dart';
 
-class LatihanView extends GetView<LatihanController> {
+class LatihanView
+    extends GetView<LatihanController> {
   const LatihanView({
     super.key,
   });
@@ -13,37 +14,37 @@ class LatihanView extends GetView<LatihanController> {
   // COLORS
   // ============================================================
 
-  static const Color primaryColor = Color(0xFF2F9C95);
-  static const Color primaryLight = Color(0xFFDFF7F3);
+  static const Color primaryColor =
+      Color(0xFF2F9C95);
 
-  static const Color darkColor = Color(0xFF14213D);
+  static const Color primaryLight =
+      Color(0xFFDFF7F3);
 
-  static const Color secondaryText = Color(
-    0xFF72809A,
-  );
+  static const Color darkColor =
+      Color(0xFF14213D);
 
-  static const Color backgroundColor = Color(
-    0xFFF6FCFC,
-  );
+  static const Color secondaryText =
+      Color(0xFF72809A);
 
-  static const Color successColor = Color(
-    0xFF48AF69,
-  );
+  static const Color backgroundColor =
+      Color(0xFFF6FCFC);
 
-  static const Color errorColor = Color(
-    0xFFE96767,
-  );
+  static const Color successColor =
+      Color(0xFF48AF69);
 
-  static const Color warningColor = Color(
-    0xFFF2B33D,
-  );
+  static const Color errorColor =
+      Color(0xFFE96767);
+
+  static const Color warningColor =
+      Color(0xFFF2B33D);
 
   @override
   Widget build(
     BuildContext context,
   ) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor:
+          backgroundColor,
 
       body: Obx(
         () {
@@ -51,10 +52,14 @@ class LatihanView extends GetView<LatihanController> {
           // LOADING
           // ====================================================
 
-          if (controller.isLoading.value) {
+          if (controller
+              .isLoading
+              .value) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
+              child:
+                  CircularProgressIndicator(
+                color:
+                    primaryColor,
               ),
             );
           }
@@ -63,7 +68,10 @@ class LatihanView extends GetView<LatihanController> {
           // ERROR
           // ====================================================
 
-          if (controller.errorMessage.value.isNotEmpty) {
+          if (controller
+              .errorMessage
+              .value
+              .isNotEmpty) {
             return _buildError();
           }
 
@@ -71,23 +79,23 @@ class LatihanView extends GetView<LatihanController> {
           // EMPTY
           // ====================================================
 
-          if (controller.questions.isEmpty) {
+          if (controller
+              .questions
+              .isEmpty) {
             return _buildEmpty();
           }
 
           final question =
-              controller.currentQuestion;
+              controller
+                  .currentQuestion;
 
           if (question == null) {
             return _buildEmpty();
           }
 
-          // ====================================================
-          // CONTENT
-          // ====================================================
-
           return SafeArea(
-            bottom: false,
+            bottom:
+                false,
 
             child: Column(
               children: [
@@ -98,11 +106,12 @@ class LatihanView extends GetView<LatihanController> {
                 _buildAppBar(),
 
                 // ===============================================
-                // SCROLL CONTENT
+                // CONTENT
                 // ===============================================
 
                 Expanded(
-                  child: SingleChildScrollView(
+                  child:
+                      SingleChildScrollView(
                     physics:
                         const BouncingScrollPhysics(),
 
@@ -114,7 +123,8 @@ class LatihanView extends GetView<LatihanController> {
                       120,
                     ),
 
-                    child: Column(
+                    child:
+                        Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.stretch,
 
@@ -125,23 +135,29 @@ class LatihanView extends GetView<LatihanController> {
 
                         _buildProgress(),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(
+                          height: 14,
+                        ),
 
                         // =========================================
-                        // PANTUN INFO
+                        // HEADER
                         // =========================================
 
                         _buildPantunHeader(),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(
+                          height: 12,
+                        ),
 
                         // =========================================
-                        // INSTRUCTION
+                        // PETUNJUK
                         // =========================================
 
                         _buildInstruction(),
 
-                        const SizedBox(height: 14),
+                        const SizedBox(
+                          height: 14,
+                        ),
 
                         // =========================================
                         // PANTUN
@@ -149,62 +165,31 @@ class LatihanView extends GetView<LatihanController> {
 
                         _buildPantunCard(),
 
-                        const SizedBox(height: 20),
-
-                        // =========================================
-                        // PILIH JAWABAN
-                        // =========================================
-
-                        Text(
-                          'Pilih Jawaban',
-                          style: GoogleFonts.poppins(
-                            color: darkColor,
-                            fontSize: 18,
-                            fontWeight:
-                                FontWeight.w800,
-                          ),
+                        const SizedBox(
+                          height: 20,
                         ),
 
-                        const SizedBox(height: 2),
-
-                        Text(
-                          'Pilih satu kata yang menurutmu paling tepat.',
-                          style: GoogleFonts.poppins(
-                            color: secondaryText,
-                            fontSize: 10,
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
                         // =========================================
-                        // OPTIONS
+                        // INPUT BERDASARKAN LEVEL
                         // =========================================
 
-                        ...List.generate(
-                          controller
-                              .displayedOptions.length,
-                          (index) {
-                            final option =
-                                controller
-                                    .displayedOptions[
-                                index];
-
-                            return _buildOption(
-                              option,
-                              index,
-                            );
-                          },
-                        ),
+                        if (controller
+                                .inputType ==
+                            LatihanInputType
+                                .pilihan)
+                          _buildPilihanSection()
+                        else
+                          _buildKetikSection(),
 
                         // =========================================
                         // NLP FEEDBACK
                         // =========================================
 
                         if (controller
-                            .isAnswered.value) ...[
+                            .isAnswered
+                            .value) ...[
                           const SizedBox(
-                            height: 10,
+                            height: 14,
                           ),
 
                           _buildFeedback(),
@@ -233,74 +218,104 @@ class LatihanView extends GetView<LatihanController> {
 
   Widget _buildAppBar() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
+      padding:
+          const EdgeInsets.fromLTRB(
         10,
         8,
         10,
         10,
       ),
 
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration:
+          const BoxDecoration(
+        gradient:
+            LinearGradient(
           colors: [
-            Color(0xFFE8FAFC),
-            Color(0xFFF2FCFA),
+            Color(
+              0xFFE8FAFC,
+            ),
+            Color(
+              0xFFF2FCFA,
+            ),
           ],
-
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
       ),
 
       child: Row(
         children: [
           SizedBox(
-            width: 44,
-            height: 44,
+            width:
+                44,
 
-            child: Material(
-              color: Colors.white,
-              shape: const CircleBorder(),
+            height:
+                44,
 
-              child: InkWell(
+            child:
+                Material(
+              color:
+                  Colors.white,
+
+              shape:
+                  const CircleBorder(),
+
+              child:
+                  InkWell(
                 customBorder:
                     const CircleBorder(),
 
-                onTap: () {
+                onTap:
+                    () {
                   Get.back();
                 },
 
-                child: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: darkColor,
-                  size: 26,
+                child:
+                    const Icon(
+                  Icons
+                      .arrow_back_rounded,
+
+                  color:
+                      darkColor,
+
+                  size:
+                      26,
                 ),
               ),
             ),
           ),
 
           Expanded(
-            child: Column(
+            child:
+                Column(
               children: [
                 Text(
                   'Latihan Pantun',
-                  style: GoogleFonts.poppins(
-                    color: darkColor,
-                    fontSize: 20,
+
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        darkColor,
+
+                    fontSize:
+                        20,
+
                     fontWeight:
                         FontWeight.w800,
                   ),
                 ),
 
-                const SizedBox(height: 1),
-
                 Text(
-                  'Lengkapi pantun dengan kata yang tepat',
-                  textAlign: TextAlign.center,
+                  controller
+                          .isPilihanMode
+                      ? 'Pilih kata yang tepat'
+                      : 'Tulis kata yang tepat',
 
-                  style: GoogleFonts.poppins(
-                    color: secondaryText,
-                    fontSize: 9,
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        secondaryText,
+
+                    fontSize:
+                        9,
                   ),
                 ),
               ],
@@ -321,32 +336,41 @@ class LatihanView extends GetView<LatihanController> {
 
   Widget _buildProgress() {
     final double progress =
-        controller.totalQuestions == 0
+        controller
+                    .totalQuestions ==
+                0
             ? 0
-            : controller.currentNumber /
-                controller.totalQuestions;
+            : controller
+                    .currentNumber /
+                controller
+                    .totalQuestions;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 14,
+      padding:
+          const EdgeInsets.all(
+        15,
       ),
 
-      decoration: BoxDecoration(
-        color: Colors.white,
+      decoration:
+          BoxDecoration(
+        color:
+            Colors.white,
 
-        borderRadius: BorderRadius.circular(
+        borderRadius:
+            BorderRadius.circular(
           20,
         ),
 
         boxShadow: [
           BoxShadow(
             color:
-                Colors.black.withOpacity(
+                Colors.black
+                    .withOpacity(
               0.04,
             ),
 
-            blurRadius: 10,
+            blurRadius:
+                10,
 
             offset:
                 const Offset(
@@ -360,31 +384,45 @@ class LatihanView extends GetView<LatihanController> {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-
             children: [
-              Text(
-                'Soal ${controller.currentNumber} '
-                'dari ${controller.totalQuestions}',
+              Expanded(
+                child:
+                    Text(
+                  'Soal ${controller.currentNumber} '
+                  'dari ${controller.totalQuestions}',
 
-                style: GoogleFonts.poppins(
-                  color: darkColor,
-                  fontSize: 12,
-                  fontWeight:
-                      FontWeight.w700,
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        darkColor,
+
+                    fontSize:
+                        12,
+
+                    fontWeight:
+                        FontWeight.w700,
+                  ),
                 ),
               ),
+
+              // ===============================================
+              // MODE
+              // ===============================================
 
               Container(
                 padding:
                     const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 3,
+                  horizontal:
+                      8,
+
+                  vertical:
+                      4,
                 ),
 
-                decoration: BoxDecoration(
-                  color: primaryLight,
+                decoration:
+                    BoxDecoration(
+                  color:
+                      _modeBackground(),
 
                   borderRadius:
                       BorderRadius.circular(
@@ -392,7 +430,75 @@ class LatihanView extends GetView<LatihanController> {
                   ),
                 ),
 
-                child: Text(
+                child:
+                    Row(
+                  children: [
+                    Icon(
+                      controller
+                              .isPilihanMode
+                          ? Icons
+                              .touch_app_rounded
+                          : Icons
+                              .keyboard_alt_rounded,
+
+                      color:
+                          _modeColor(),
+
+                      size:
+                          13,
+                    ),
+
+                    const SizedBox(
+                      width: 4,
+                    ),
+
+                    Text(
+                      controller
+                          .inputModeLabel,
+
+                      style:
+                          GoogleFonts.poppins(
+                        color:
+                            _modeColor(),
+
+                        fontSize:
+                            8,
+
+                        fontWeight:
+                            FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                width: 6,
+              ),
+
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(
+                  horizontal:
+                      8,
+
+                  vertical:
+                      4,
+                ),
+
+                decoration:
+                    BoxDecoration(
+                  color:
+                      primaryLight,
+
+                  borderRadius:
+                      BorderRadius.circular(
+                    20,
+                  ),
+                ),
+
+                child:
+                    Text(
                   '${(progress * 100).round()}%',
 
                   style:
@@ -401,7 +507,7 @@ class LatihanView extends GetView<LatihanController> {
                         primaryColor,
 
                     fontSize:
-                        10,
+                        8,
 
                     fontWeight:
                         FontWeight.w700,
@@ -411,7 +517,9 @@ class LatihanView extends GetView<LatihanController> {
             ],
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(
+            height: 10,
+          ),
 
           ClipRRect(
             borderRadius:
@@ -432,11 +540,8 @@ class LatihanView extends GetView<LatihanController> {
                 0xFFDDEEEE,
               ),
 
-              valueColor:
-                  const AlwaysStoppedAnimation<
-                      Color>(
-                primaryColor,
-              ),
+              color:
+                  primaryColor,
             ),
           ),
         ],
@@ -445,25 +550,66 @@ class LatihanView extends GetView<LatihanController> {
   }
 
   // ============================================================
+  // MODE COLORS
+  // ============================================================
+
+  Color _modeColor() {
+    if (controller
+        .isMixedLevel) {
+      return const Color(
+        0xFF8062D0,
+      );
+    }
+
+    if (controller
+        .isPilihanMode) {
+      return const Color(
+        0xFF5196C7,
+      );
+    }
+
+    return const Color(
+      0xFFE18A28,
+    );
+  }
+
+  Color _modeBackground() {
+    if (controller
+        .isMixedLevel) {
+      return const Color(
+        0xFFF0EBFF,
+      );
+    }
+
+    if (controller
+        .isPilihanMode) {
+      return const Color(
+        0xFFE7F4FC,
+      );
+    }
+
+    return const Color(
+      0xFFFFF0DD,
+    );
+  }
+
+  // ============================================================
   // PANTUN HEADER
   // ============================================================
 
   Widget _buildPantunHeader() {
-    final theme =
-        _getCategoryTheme(
-      controller.pantun.kategori,
-    );
-
     return Container(
       padding:
           const EdgeInsets.all(
-        14,
+        15,
       ),
 
       decoration:
           BoxDecoration(
         color:
-            theme.background,
+            const Color(
+          0xFFF0FAF8,
+        ),
 
         borderRadius:
             BorderRadius.circular(
@@ -473,35 +619,34 @@ class LatihanView extends GetView<LatihanController> {
 
       child: Row(
         children: [
-          // ====================================================
-          // CATEGORY IMAGE
-          // ====================================================
-
           Container(
-            width: 58,
-            height: 58,
+            width:
+                55,
 
-            padding:
-                const EdgeInsets.all(
-              9,
-            ),
+            height:
+                55,
 
             decoration:
                 BoxDecoration(
               color:
-                  theme.iconBackground,
+                  primaryLight,
 
               borderRadius:
                   BorderRadius.circular(
-                16,
+                15,
               ),
             ),
 
             child:
-                _buildCategoryImage(
-              controller
-                  .pantun
-                  .kategori,
+                const Icon(
+              Icons
+                  .auto_stories_rounded,
+
+              color:
+                  primaryColor,
+
+              size:
+                  30,
             ),
           ),
 
@@ -509,12 +654,9 @@ class LatihanView extends GetView<LatihanController> {
             width: 12,
           ),
 
-          // ====================================================
-          // INFO
-          // ====================================================
-
           Expanded(
-            child: Column(
+            child:
+                Column(
               crossAxisAlignment:
                   CrossAxisAlignment.start,
 
@@ -524,7 +666,8 @@ class LatihanView extends GetView<LatihanController> {
                       .pantun
                       .judul,
 
-                  maxLines: 2,
+                  maxLines:
+                      2,
 
                   overflow:
                       TextOverflow.ellipsis,
@@ -535,7 +678,7 @@ class LatihanView extends GetView<LatihanController> {
                         darkColor,
 
                     fontSize:
-                        16,
+                        15,
 
                     fontWeight:
                         FontWeight.w800,
@@ -543,55 +686,116 @@ class LatihanView extends GetView<LatihanController> {
                 ),
 
                 const SizedBox(
-                  height: 7,
+                  height: 6,
                 ),
 
                 Wrap(
-                  spacing: 6,
-                  runSpacing: 5,
+                  spacing:
+                      5,
+
+                  runSpacing:
+                      5,
 
                   children: [
-                    _buildSmallChip(
-                      icon:
-                          Icons.eco_rounded,
+                    _chip(
+                      'Level ${controller.levelNumber}',
 
-                      text:
-                          controller
-                              .pantun
-                              .kategori,
+                      Icons
+                          .school_rounded,
 
-                      color:
-                          theme.color,
+                      const Color(
+                        0xFF4E7AA7,
+                      ),
 
-                      background:
-                          theme
-                              .chipBackground,
+                      const Color(
+                        0xFFE4F1FA,
+                      ),
                     ),
 
-                    if (controller
-                        .pantun
-                        .level
-                        .isNotEmpty)
-                      _buildSmallChip(
-                        icon: Icons
-                            .school_rounded,
+                    _chip(
+                      controller
+                          .inputModeLabel,
 
-                        text:
-                            'Level: ${_capitalize(controller.pantun.level)}',
+                      controller
+                              .isPilihanMode
+                          ? Icons
+                              .touch_app_rounded
+                          : Icons
+                              .keyboard_alt_rounded,
 
-                        color:
-                            const Color(
-                          0xFF4E7AA7,
-                        ),
+                      _modeColor(),
 
-                        background:
-                            const Color(
-                          0xFFE4F1FA,
-                        ),
-                      ),
+                      _modeBackground(),
+                    ),
                   ],
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chip(
+    String text,
+    IconData icon,
+    Color color,
+    Color background,
+  ) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal:
+            8,
+
+        vertical:
+            4,
+      ),
+
+      decoration:
+          BoxDecoration(
+        color:
+            background,
+
+        borderRadius:
+            BorderRadius.circular(
+          20,
+        ),
+      ),
+
+      child: Row(
+        mainAxisSize:
+            MainAxisSize.min,
+
+        children: [
+          Icon(
+            icon,
+
+            color:
+                color,
+
+            size:
+                12,
+          ),
+
+          const SizedBox(
+            width: 3,
+          ),
+
+          Text(
+            text,
+
+            style:
+                GoogleFonts.poppins(
+              color:
+                  color,
+
+              fontSize:
+                  8,
+
+              fontWeight:
+                  FontWeight.w600,
             ),
           ),
         ],
@@ -606,65 +810,63 @@ class LatihanView extends GetView<LatihanController> {
   Widget _buildInstruction() {
     return Container(
       padding:
-          const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 12,
+          const EdgeInsets.all(
+        13,
       ),
 
       decoration:
           BoxDecoration(
         color:
-            const Color(
-          0xFFE8F7FF,
-        ),
+            controller
+                    .isPilihanMode
+                ? const Color(
+                    0xFFEAF7FE,
+                  )
+                : const Color(
+                    0xFFFFF5E5,
+                  ),
 
         borderRadius:
             BorderRadius.circular(
-          18,
+          17,
         ),
       ),
 
       child: Row(
         children: [
-          Container(
-            width: 39,
-            height: 39,
+          Icon(
+            controller
+                    .isPilihanMode
+                ? Icons
+                    .touch_app_rounded
+                : Icons
+                    .edit_rounded,
 
-            decoration:
-                BoxDecoration(
-              color:
-                  const Color(
-                0xFFFFE7A5,
-              ),
+            color:
+                controller
+                        .isPilihanMode
+                    ? const Color(
+                        0xFF5196C7,
+                      )
+                    : warningColor,
 
-              borderRadius:
-                  BorderRadius.circular(
-                12,
-              ),
-            ),
-
-            child:
-                const Icon(
-              Icons.lightbulb_rounded,
-
-              color:
-                  Color(
-                0xFFF1A829,
-              ),
-
-              size:
-                  24,
-            ),
+            size:
+                25,
           ),
 
           const SizedBox(
-            width: 11,
+            width: 10,
           ),
 
           Expanded(
-            child: Text(
-              'Lengkapi pantun berikut dengan '
-              'kata yang paling tepat.',
+            child:
+                Text(
+              controller
+                      .isPilihanMode
+                  ? 'Pilih satu kata yang paling tepat '
+                      'untuk melengkapi pantun.'
+                  : 'Ketik sendiri kata yang paling tepat. '
+                      'Perhatikan makna, konteks, dan rima.',
 
               style:
                   GoogleFonts.poppins(
@@ -672,13 +874,10 @@ class LatihanView extends GetView<LatihanController> {
                     darkColor,
 
                 fontSize:
-                    11,
+                    10,
 
                 height:
-                    1.45,
-
-                fontWeight:
-                    FontWeight.w500,
+                    1.5,
               ),
             ),
           ),
@@ -688,24 +887,26 @@ class LatihanView extends GetView<LatihanController> {
   }
 
   // ============================================================
-  // PANTUN CARD
+  // PANTUN
   // ============================================================
 
   Widget _buildPantunCard() {
     final question =
-        controller.currentQuestion;
+        controller
+            .currentQuestion;
 
     if (question == null) {
-      return const SizedBox.shrink();
+      return const SizedBox
+          .shrink();
     }
 
     return Container(
+      width:
+          double.infinity,
+
       padding:
-          const EdgeInsets.fromLTRB(
-        18,
-        24,
-        18,
-        24,
+          const EdgeInsets.all(
+        22,
       ),
 
       decoration:
@@ -715,14 +916,14 @@ class LatihanView extends GetView<LatihanController> {
 
         borderRadius:
             BorderRadius.circular(
-          25,
+          24,
         ),
 
         border:
             Border.all(
           color:
               const Color(
-            0xFFE6F1EF,
+            0xFFE5EFEE,
           ),
         ),
 
@@ -746,75 +947,15 @@ class LatihanView extends GetView<LatihanController> {
         ],
       ),
 
-      child: Stack(
-        children: [
-          // ====================================================
-          // LEAF DECORATION
-          // ====================================================
-
-          const Positioned(
-            top: -5,
-            left: -4,
-
-            child: Icon(
-              Icons.eco_rounded,
-
-              color:
-                  Color(
-                0xFF65B97A,
-              ),
-
-              size:
-                  33,
-            ),
-          ),
-
-          const Positioned(
-            bottom: -5,
-            right: -4,
-
-            child: RotatedBox(
-              quarterTurns: 2,
-
-              child:
-                  Icon(
-                Icons.eco_rounded,
-
-                color:
-                    Color(
-                  0xFF91D4A2,
-                ),
-
-                size:
-                    31,
-              ),
-            ),
-          ),
-
-          // ====================================================
-          // TEXT
-          // ====================================================
-
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-
-            child:
-                _buildPantunTemplate(
-              question.template,
-            ),
-          ),
-        ],
+      child:
+          _buildPantunTemplate(
+        question.template,
       ),
     );
   }
 
   // ============================================================
-  // PANTUN TEMPLATE
-  // Mendeteksi _____ pada soal
+  // TEMPLATE RUMPANG
   // ============================================================
 
   Widget _buildPantunTemplate(
@@ -828,11 +969,10 @@ class LatihanView extends GetView<LatihanController> {
     final matches =
         regex
             .allMatches(
-      template,
-    )
+              template,
+            )
             .toList();
 
-    // Jika template tidak memiliki tanda rumpang
     if (matches.isEmpty) {
       return Text(
         template,
@@ -857,8 +997,8 @@ class LatihanView extends GetView<LatihanController> {
       );
     }
 
-    final List<InlineSpan> spans =
-        [];
+    final List<InlineSpan>
+        spans = [];
 
     int lastIndex =
         0;
@@ -878,15 +1018,48 @@ class LatihanView extends GetView<LatihanController> {
         );
       }
 
-      final String selected =
+      final selected =
           controller
               .selectedAnswer
               .value;
 
+      Color color =
+          primaryColor;
+
+      Color background =
+          selected.isEmpty
+              ? const Color(
+                  0xFFF4FBFA,
+                )
+              : primaryLight;
+
+      if (controller
+          .isAnswered
+          .value) {
+        color =
+            controller
+                    .isCorrect
+                    .value
+                ? successColor
+                : errorColor;
+
+        background =
+            controller
+                    .isCorrect
+                    .value
+                ? const Color(
+                    0xFFECF9F0,
+                  )
+                : const Color(
+                    0xFFFFF0F0,
+                  );
+      }
+
       spans.add(
         WidgetSpan(
           alignment:
-              PlaceholderAlignment.middle,
+              PlaceholderAlignment
+                  .middle,
 
           child:
               Container(
@@ -906,18 +1079,15 @@ class LatihanView extends GetView<LatihanController> {
                 const EdgeInsets.symmetric(
               horizontal:
                   11,
+
               vertical:
-                  4,
+                  5,
             ),
 
             decoration:
                 BoxDecoration(
               color:
-                  selected.isEmpty
-                      ? const Color(
-                          0xFFF3FCFA,
-                        )
-                      : primaryLight,
+                  background,
 
               borderRadius:
                   BorderRadius.circular(
@@ -927,7 +1097,7 @@ class LatihanView extends GetView<LatihanController> {
               border:
                   Border.all(
                 color:
-                    primaryColor,
+                    color,
 
                 width:
                     1.5,
@@ -946,11 +1116,7 @@ class LatihanView extends GetView<LatihanController> {
               style:
                   GoogleFonts.poppins(
                 color:
-                    selected.isEmpty
-                        ? primaryColor
-                        : const Color(
-                            0xFF267B61,
-                          ),
+                    color,
 
                 fontSize:
                     13,
@@ -1007,6 +1173,385 @@ class LatihanView extends GetView<LatihanController> {
   }
 
   // ============================================================
+  // PILIHAN SECTION
+  // ============================================================
+
+  Widget _buildPilihanSection() {
+    return Column(
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch,
+
+      children: [
+        Text(
+          'Pilih Jawaban',
+
+          style:
+              GoogleFonts.poppins(
+            color:
+                darkColor,
+
+            fontSize:
+                18,
+
+            fontWeight:
+                FontWeight.w800,
+          ),
+        ),
+
+        const SizedBox(
+          height: 3,
+        ),
+
+        Text(
+          'Pilih satu kata yang '
+          'menurutmu paling tepat.',
+
+          style:
+              GoogleFonts.poppins(
+            color:
+                secondaryText,
+
+            fontSize:
+                10,
+          ),
+        ),
+
+        const SizedBox(
+          height: 12,
+        ),
+
+        ...List.generate(
+          controller
+              .displayedOptions
+              .length,
+
+          (
+            index,
+          ) {
+            return _buildOption(
+              controller
+                      .displayedOptions[
+                  index],
+
+              index,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  // ============================================================
+  // KETIK SECTION
+  // ============================================================
+
+  Widget _buildKetikSection() {
+    final bool answered =
+        controller
+            .isAnswered
+            .value;
+
+    final bool correct =
+        controller
+            .isCorrect
+            .value;
+
+    return Column(
+      crossAxisAlignment:
+          CrossAxisAlignment.stretch,
+
+      children: [
+        Text(
+          'Tulis Jawaban',
+
+          style:
+              GoogleFonts.poppins(
+            color:
+                darkColor,
+
+            fontSize:
+                18,
+
+            fontWeight:
+                FontWeight.w800,
+          ),
+        ),
+
+        const SizedBox(
+          height: 3,
+        ),
+
+        Text(
+          controller
+                  .isMixedLevel
+              ? 'Mode campuran: tulis jawaban untuk soal ini.'
+              : 'Ketik kata yang tepat untuk melengkapi pantun.',
+
+          style:
+              GoogleFonts.poppins(
+            color:
+                secondaryText,
+
+            fontSize:
+                10,
+          ),
+        ),
+
+        const SizedBox(
+          height: 12,
+        ),
+
+        TextField(
+          controller:
+              controller
+                  .answerTextController,
+
+          enabled:
+              !answered &&
+                  !controller
+                      .isChecking
+                      .value,
+
+          onChanged:
+              controller
+                  .updateTypedAnswer,
+
+          onSubmitted:
+              (
+            value,
+          ) {
+            if (!answered &&
+                controller
+                    .selectedAnswer
+                    .value
+                    .isNotEmpty) {
+              controller
+                  .checkAnswer();
+            }
+          },
+
+          textInputAction:
+              TextInputAction.done,
+
+          autocorrect:
+              false,
+
+          style:
+              GoogleFonts.poppins(
+            color:
+                darkColor,
+
+            fontSize:
+                14,
+
+            fontWeight:
+                FontWeight.w600,
+          ),
+
+          decoration:
+              InputDecoration(
+            hintText:
+                'Ketik jawabanmu di sini...',
+
+            hintStyle:
+                GoogleFonts.poppins(
+              color:
+                  secondaryText,
+
+              fontSize:
+                  11,
+            ),
+
+            prefixIcon:
+                Icon(
+              Icons
+                  .edit_rounded,
+
+              color:
+                  answered
+                      ? correct
+                          ? successColor
+                          : errorColor
+                      : primaryColor,
+            ),
+
+            suffixIcon:
+                answered
+                    ? Icon(
+                        correct
+                            ? Icons
+                                .check_circle_rounded
+                            : Icons
+                                .cancel_rounded,
+
+                        color:
+                            correct
+                                ? successColor
+                                : errorColor,
+                      )
+                    : controller
+                            .typedAnswer
+                            .value
+                            .isNotEmpty
+                        ? IconButton(
+                            onPressed:
+                                controller
+                                    .clearTypedAnswer,
+
+                            icon:
+                                const Icon(
+                              Icons
+                                  .close_rounded,
+                            ),
+                          )
+                        : null,
+
+            filled:
+                true,
+
+            fillColor:
+                answered
+                    ? correct
+                        ? const Color(
+                            0xFFECF9F0,
+                          )
+                        : const Color(
+                            0xFFFFF0F0,
+                          )
+                    : Colors.white,
+
+            contentPadding:
+                const EdgeInsets.symmetric(
+              horizontal:
+                  16,
+
+              vertical:
+                  18,
+            ),
+
+            enabledBorder:
+                OutlineInputBorder(
+              borderRadius:
+                  BorderRadius.circular(
+                17,
+              ),
+
+              borderSide:
+                  const BorderSide(
+                color:
+                    Color(
+                  0xFFDDE7EB,
+                ),
+              ),
+            ),
+
+            disabledBorder:
+                OutlineInputBorder(
+              borderRadius:
+                  BorderRadius.circular(
+                17,
+              ),
+
+              borderSide:
+                  BorderSide(
+                color:
+                    correct
+                        ? successColor
+                        : errorColor,
+
+                width:
+                    1.5,
+              ),
+            ),
+
+            focusedBorder:
+                OutlineInputBorder(
+              borderRadius:
+                  BorderRadius.circular(
+                17,
+              ),
+
+              borderSide:
+                  const BorderSide(
+                color:
+                    primaryColor,
+
+                width:
+                    1.7,
+              ),
+            ),
+          ),
+        ),
+
+        if (!answered) ...[
+          const SizedBox(
+            height: 9,
+          ),
+
+          Container(
+            padding:
+                const EdgeInsets.all(
+              11,
+            ),
+
+            decoration:
+                BoxDecoration(
+              color:
+                  const Color(
+                0xFFFFF7E8,
+              ),
+
+              borderRadius:
+                  BorderRadius.circular(
+                13,
+              ),
+            ),
+
+            child:
+                Row(
+              children: [
+                const Icon(
+                  Icons
+                      .lightbulb_outline_rounded,
+
+                  color:
+                      warningColor,
+
+                  size:
+                      17,
+                ),
+
+                const SizedBox(
+                  width: 7,
+                ),
+
+                Expanded(
+                  child:
+                      Text(
+                    'Perhatikan makna, konteks, '
+                    'dan rima sebelum menulis jawaban.',
+
+                    style:
+                        GoogleFonts.poppins(
+                      color:
+                          const Color(
+                        0xFF77694A,
+                      ),
+
+                      fontSize:
+                          9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ============================================================
   // OPTION
   // ============================================================
 
@@ -1026,17 +1571,18 @@ class LatihanView extends GetView<LatihanController> {
             .value;
 
     final question =
-        controller.currentQuestion;
+        controller
+            .currentQuestion;
 
-    final bool referenceOption =
+    final bool reference =
         question != null &&
-        option
-                .trim()
-                .toLowerCase() ==
-            question
-                .referenceAnswer
-                .trim()
-                .toLowerCase();
+            option
+                    .trim()
+                    .toLowerCase() ==
+                question
+                    .referenceAnswer
+                    .trim()
+                    .toLowerCase();
 
     Color borderColor =
         const Color(
@@ -1051,21 +1597,14 @@ class LatihanView extends GetView<LatihanController> {
       0xFFDDF3FB,
     );
 
-    Color textColor =
-        darkColor;
-
-    IconData trailingIcon =
+    IconData icon =
         Icons
             .radio_button_unchecked_rounded;
 
-    Color trailingColor =
+    Color iconColor =
         const Color(
       0xFFAEBCCC,
     );
-
-    // ==========================================================
-    // SELECTED BELUM DIJAWAB
-    // ==========================================================
 
     if (!answered &&
         selected) {
@@ -1080,22 +1619,19 @@ class LatihanView extends GetView<LatihanController> {
       circleColor =
           primaryColor;
 
-      trailingIcon =
+      icon =
           Icons
               .radio_button_checked_rounded;
 
-      trailingColor =
+      iconColor =
           primaryColor;
     }
-
-    // ==========================================================
-    // BENAR
-    // ==========================================================
 
     if (answered &&
         selected &&
         controller
-            .isCorrect.value) {
+            .isCorrect
+            .value) {
       borderColor =
           successColor;
 
@@ -1107,21 +1643,19 @@ class LatihanView extends GetView<LatihanController> {
       circleColor =
           successColor;
 
-      trailingIcon =
-          Icons.check_circle_rounded;
+      icon =
+          Icons
+              .check_circle_rounded;
 
-      trailingColor =
+      iconColor =
           successColor;
     }
-
-    // ==========================================================
-    // SALAH
-    // ==========================================================
 
     if (answered &&
         selected &&
         !controller
-            .isCorrect.value) {
+            .isCorrect
+            .value) {
       borderColor =
           errorColor;
 
@@ -1133,21 +1667,18 @@ class LatihanView extends GetView<LatihanController> {
       circleColor =
           errorColor;
 
-      trailingIcon =
+      icon =
           Icons.cancel_rounded;
 
-      trailingColor =
+      iconColor =
           errorColor;
     }
 
-    // ==========================================================
-    // JAWABAN REFERENSI
-    // ==========================================================
-
     if (answered &&
         !controller
-            .isCorrect.value &&
-        referenceOption &&
+            .isCorrect
+            .value &&
+        reference &&
         !selected) {
       borderColor =
           successColor;
@@ -1157,17 +1688,22 @@ class LatihanView extends GetView<LatihanController> {
         0xFFECF9F0,
       );
 
-      trailingIcon =
-          Icons.check_circle_outline;
+      circleColor =
+          successColor;
 
-      trailingColor =
+      icon =
+          Icons
+              .check_circle_outline_rounded;
+
+      iconColor =
           successColor;
     }
 
     return Container(
       margin:
           const EdgeInsets.only(
-        bottom: 10,
+        bottom:
+            10,
       ),
 
       decoration:
@@ -1187,35 +1723,23 @@ class LatihanView extends GetView<LatihanController> {
 
           width:
               selected ||
-                      referenceOption
+                      reference
                   ? 1.5
                   : 1,
         ),
-
-        boxShadow: [
-          BoxShadow(
-            color:
-                Colors.black
-                    .withOpacity(
-              0.025,
-            ),
-
-            blurRadius:
-                7,
-
-            offset:
-                const Offset(
-              0,
-              3,
-            ),
-          ),
-        ],
       ),
 
       child:
-          Material(
-        color:
-            Colors.transparent,
+          InkWell(
+        onTap:
+            answered
+                ? null
+                : () {
+                    controller
+                        .selectAnswer(
+                      option,
+                    );
+                  },
 
         borderRadius:
             BorderRadius.circular(
@@ -1223,233 +1747,54 @@ class LatihanView extends GetView<LatihanController> {
         ),
 
         child:
-            InkWell(
-          borderRadius:
-              BorderRadius.circular(
-            17,
+            Padding(
+          padding:
+              const EdgeInsets.all(
+            13,
           ),
-
-          onTap:
-              answered ||
-                      controller
-                          .isChecking
-                          .value
-                  ? null
-                  : () {
-                      controller
-                          .selectAnswer(
-                        option,
-                      );
-                    },
 
           child:
-              Padding(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal:
-                  13,
-              vertical:
-                  13,
-            ),
-
-            child:
-                Row(
-              children: [
-                // ===============================================
-                // A B C D
-                // ===============================================
-
-                Container(
-                  width:
-                      37,
-
-                  height:
-                      37,
-
-                  alignment:
-                      Alignment.center,
-
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        circleColor,
-
-                    shape:
-                        BoxShape.circle,
-                  ),
-
-                  child:
-                      Text(
-                    _optionLetter(
-                      index,
-                    ),
-
-                    style:
-                        GoogleFonts.poppins(
-                      color:
-                          selected ||
-                                  (answered &&
-                                      referenceOption)
-                              ? Colors.white
-                              : const Color(
-                                  0xFF36779D,
-                                ),
-
-                      fontSize:
-                          13,
-
-                      fontWeight:
-                          FontWeight.w700,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  width: 12,
-                ),
-
-                Expanded(
-                  child:
-                      Text(
-                    option,
-
-                    style:
-                        GoogleFonts.poppins(
-                      color:
-                          textColor,
-
-                      fontSize:
-                          13,
-
-                      fontWeight:
-                          selected
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  width: 8,
-                ),
-
-                Icon(
-                  trailingIcon,
-
-                  color:
-                      trailingColor,
-
-                  size:
-                      25,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // FEEDBACK NLP
-  // ============================================================
-
-  Widget _buildFeedback() {
-    final question =
-        controller.currentQuestion;
-
-    final result =
-        controller.nlpResult.value;
-
-    if (question == null ||
-        result == null) {
-      return const SizedBox.shrink();
-    }
-
-    final bool correct =
-        result.isCorrect;
-
-    final Color resultColor =
-        correct
-            ? successColor
-            : errorColor;
-
-    final Color resultBackground =
-        correct
-            ? const Color(
-                0xFFF0FAF2,
-              )
-            : const Color(
-                0xFFFFF2F2,
-              );
-
-    return Container(
-      padding:
-          const EdgeInsets.all(
-        16,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            resultBackground,
-
-        borderRadius:
-            BorderRadius.circular(
-          24,
-        ),
-
-        border:
-            Border.all(
-          color:
-              resultColor
-                  .withOpacity(
-            0.20,
-          ),
-        ),
-      ),
-
-      child:
-          Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-        children: [
-          // ====================================================
-          // RESULT HEADER
-          // ====================================================
-
-          Row(
+              Row(
             children: [
               Container(
                 width:
-                    48,
+                    37,
 
                 height:
-                    48,
+                    37,
+
+                alignment:
+                    Alignment.center,
 
                 decoration:
                     BoxDecoration(
                   color:
-                      resultColor,
+                      circleColor,
 
                   shape:
                       BoxShape.circle,
                 ),
 
                 child:
-                    Icon(
-                  correct
-                      ? Icons
-                          .check_rounded
-                      : Icons
-                          .close_rounded,
+                    Text(
+                  _letter(
+                    index,
+                  ),
 
-                  color:
-                      Colors.white,
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        selected ||
+                                (answered &&
+                                    reference)
+                            ? Colors.white
+                            : const Color(
+                                0xFF36779D,
+                              ),
 
-                  size:
-                      29,
+                    fontWeight:
+                        FontWeight.w700,
+                  ),
                 ),
               ),
 
@@ -1459,213 +1804,8 @@ class LatihanView extends GetView<LatihanController> {
 
               Expanded(
                 child:
-                    Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-
-                  children: [
                     Text(
-                      correct
-                          ? 'Jawaban Benar! 🎉'
-                          : 'Belum Tepat',
-
-                      style:
-                          GoogleFonts.poppins(
-                        color:
-                            correct
-                                ? const Color(
-                                    0xFF23784A,
-                                  )
-                                : const Color(
-                                    0xFFA43B3B,
-                                  ),
-
-                        fontSize:
-                            18,
-
-                        fontWeight:
-                            FontWeight
-                                .w800,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 2,
-                    ),
-
-                    Text(
-                      correct
-                          ? 'Hebat! Jawabanmu cocok dengan pantun.'
-                          : 'Tidak apa-apa, mari pelajari jawabannya.',
-
-                      style:
-                          GoogleFonts.poppins(
-                        color:
-                            secondaryText,
-
-                        fontSize:
-                            10,
-
-                        height:
-                            1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: 18,
-          ),
-
-          // ====================================================
-          // SCORES
-          // ====================================================
-
-          Container(
-            padding:
-                const EdgeInsets.all(
-              14,
-            ),
-
-            decoration:
-                BoxDecoration(
-              color:
-                  Colors.white,
-
-              borderRadius:
-                  BorderRadius.circular(
-                18,
-              ),
-            ),
-
-            child:
-                Column(
-              children: [
-                _buildScoreItem(
-                  icon:
-                      Icons
-                          .auto_stories_rounded,
-
-                  title:
-                      'Kesesuaian Makna',
-
-                  score:
-                      result.semanticScore,
-
-                  color:
-                      const Color(
-                    0xFF44A96F,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 15,
-                ),
-
-                _buildScoreItem(
-                  icon:
-                      Icons
-                          .chat_bubble_rounded,
-
-                  title:
-                      'Kesesuaian Konteks',
-
-                  score:
-                      result.contextScore,
-
-                  color:
-                      const Color(
-                    0xFF3AAE9E,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 15,
-                ),
-
-                _buildScoreItem(
-                  icon:
-                      Icons
-                          .music_note_rounded,
-
-                  title:
-                      'Kesesuaian Rima',
-
-                  score:
-                      result.rhymeScore,
-
-                  color:
-                      const Color(
-                    0xFF43AEB5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(
-            height: 13,
-          ),
-
-          // ====================================================
-          // NLP SCORE
-          // ====================================================
-
-          Container(
-            width:
-                double.infinity,
-
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal:
-                  14,
-              vertical:
-                  12,
-            ),
-
-            decoration:
-                BoxDecoration(
-              color:
-                  const Color(
-                0xFFFFF2CF,
-              ),
-
-              borderRadius:
-                  BorderRadius.circular(
-                16,
-              ),
-            ),
-
-            child:
-                Row(
-              mainAxisAlignment:
-                  MainAxisAlignment
-                      .center,
-
-              children: [
-                const Icon(
-                  Icons
-                      .star_rounded,
-
-                  color:
-                      Color(
-                    0xFFF0A928,
-                  ),
-
-                  size:
-                      27,
-                ),
-
-                const SizedBox(
-                  width: 7,
-                ),
-
-                Text(
-                  'Nilai NLP: ',
+                  option,
 
                   style:
                       GoogleFonts.poppins(
@@ -1676,38 +1816,172 @@ class LatihanView extends GetView<LatihanController> {
                         13,
 
                     fontWeight:
-                        FontWeight.w600,
+                        selected
+                            ? FontWeight
+                                .w700
+                            : FontWeight
+                                .w500,
                   ),
                 ),
+              ),
 
-                Text(
-                  '${(result.finalScore * 100).round()}%',
+              Icon(
+                icon,
+
+                color:
+                    iconColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // NLP FEEDBACK
+  // ============================================================
+
+  Widget _buildFeedback() {
+    final question =
+        controller
+            .currentQuestion;
+
+    final result =
+        controller
+            .nlpResult
+            .value;
+
+    if (question == null ||
+        result == null) {
+      return const SizedBox
+          .shrink();
+    }
+
+    final bool correct =
+        result.isCorrect;
+
+    return Container(
+      padding:
+          const EdgeInsets.all(
+        16,
+      ),
+
+      decoration:
+          BoxDecoration(
+        color:
+            correct
+                ? const Color(
+                    0xFFF0FAF2,
+                  )
+                : const Color(
+                    0xFFFFF2F2,
+                  ),
+
+        borderRadius:
+            BorderRadius.circular(
+          22,
+        ),
+      ),
+
+      child:
+          Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
+        children: [
+          Row(
+            children: [
+              Icon(
+                correct
+                    ? Icons
+                        .check_circle_rounded
+                    : Icons
+                        .cancel_rounded,
+
+                color:
+                    correct
+                        ? successColor
+                        : errorColor,
+
+                size:
+                    35,
+              ),
+
+              const SizedBox(
+                width: 10,
+              ),
+
+              Expanded(
+                child:
+                    Text(
+                  correct
+                      ? 'Jawaban Benar! 🎉'
+                      : 'Belum Tepat',
 
                   style:
                       GoogleFonts.poppins(
                     color:
-                        const Color(
-                      0xFF278C70,
-                    ),
+                        correct
+                            ? successColor
+                            : errorColor,
 
                     fontSize:
-                        20,
+                        17,
 
                     fontWeight:
                         FontWeight.w800,
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+
+          const SizedBox(
+            height: 15,
+          ),
+
+          _scoreItem(
+            'Makna',
+
+            result.semanticScore,
+
+            const Color(
+              0xFF44A96F,
             ),
           ),
 
           const SizedBox(
-            height: 16,
+            height: 10,
           ),
 
-          // ====================================================
-          // EXPLANATION
-          // ====================================================
+          _scoreItem(
+            'Konteks',
+
+            result.contextScore,
+
+            const Color(
+              0xFF3AAE9E,
+            ),
+          ),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          _scoreItem(
+            'Rima',
+
+            result.rhymeScore,
+
+            const Color(
+              0xFF5196C7,
+            ),
+          ),
+
+          const SizedBox(
+            height: 15,
+          ),
 
           Text(
             'Penjelasan',
@@ -1718,15 +1992,15 @@ class LatihanView extends GetView<LatihanController> {
                   darkColor,
 
               fontSize:
-                  13,
+                  12,
 
               fontWeight:
-                  FontWeight.w800,
+                  FontWeight.w700,
             ),
           ),
 
           const SizedBox(
-            height: 5,
+            height: 4,
           ),
 
           Text(
@@ -1735,25 +2009,19 @@ class LatihanView extends GetView<LatihanController> {
             style:
                 GoogleFonts.poppins(
               color:
-                  const Color(
-                0xFF53617B,
-              ),
+                  secondaryText,
 
               fontSize:
                   10,
 
               height:
-                  1.6,
+                  1.5,
             ),
           ),
 
-          // ====================================================
-          // REFERENCE ANSWER
-          // ====================================================
-
-          if (!result.isCorrect) ...[
+          if (!correct) ...[
             const SizedBox(
-              height: 15,
+              height: 12,
             ),
 
             Container(
@@ -1762,7 +2030,7 @@ class LatihanView extends GetView<LatihanController> {
 
               padding:
                   const EdgeInsets.all(
-                13,
+                12,
               ),
 
               decoration:
@@ -1774,76 +2042,28 @@ class LatihanView extends GetView<LatihanController> {
 
                 borderRadius:
                     BorderRadius.circular(
-                  15,
+                  13,
                 ),
               ),
 
               child:
-                  Row(
-                children: [
-                  const Icon(
-                    Icons
-                        .lightbulb_outline_rounded,
+                  Text(
+                'Jawaban tepat: '
+                '${question.referenceAnswer}',
 
-                    color:
-                        successColor,
-
-                    size:
-                        22,
+                style:
+                    GoogleFonts.poppins(
+                  color:
+                      const Color(
+                    0xFF267B50,
                   ),
 
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  fontSize:
+                      11,
 
-                  Expanded(
-                    child:
-                        Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
-
-                      children: [
-                        Text(
-                          'Jawaban yang tepat',
-
-                          style:
-                              GoogleFonts.poppins(
-                            color:
-                                secondaryText,
-
-                            fontSize:
-                                9,
-                          ),
-                        ),
-
-                        const SizedBox(
-                          height: 2,
-                        ),
-
-                        Text(
-                          question
-                              .referenceAnswer,
-
-                          style:
-                              GoogleFonts.poppins(
-                            color:
-                                const Color(
-                              0xFF267B50,
-                            ),
-
-                            fontSize:
-                                14,
-
-                            fontWeight:
-                                FontWeight
-                                    .w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  fontWeight:
+                      FontWeight.w700,
+                ),
               ),
             ),
           ],
@@ -1852,17 +2072,12 @@ class LatihanView extends GetView<LatihanController> {
     );
   }
 
-  // ============================================================
-  // SCORE
-  // ============================================================
-
-  Widget _buildScoreItem({
-    required IconData icon,
-    required String title,
-    required double score,
-    required Color color,
-  }) {
-    final double safeScore =
+  Widget _scoreItem(
+    String title,
+    double score,
+    Color color,
+  ) {
+    final value =
         score
             .clamp(
               0.0,
@@ -1870,50 +2085,11 @@ class LatihanView extends GetView<LatihanController> {
             )
             .toDouble();
 
-    final int percentage =
-        (safeScore * 100)
-            .round();
-
     return Row(
       children: [
-        Container(
+        SizedBox(
           width:
-              31,
-
-          height:
-              31,
-
-          decoration:
-              BoxDecoration(
-            color:
-                color.withOpacity(
-              0.11,
-            ),
-
-            borderRadius:
-                BorderRadius.circular(
-              9,
-            ),
-          ),
-
-          child:
-              Icon(
-            icon,
-
-            color:
-                color,
-
-            size:
-                17,
-          ),
-        ),
-
-        const SizedBox(
-          width: 9,
-        ),
-
-        Expanded(
-          flex: 2,
+              65,
 
           child:
               Text(
@@ -1921,9 +2097,6 @@ class LatihanView extends GetView<LatihanController> {
 
             style:
                 GoogleFonts.poppins(
-              color:
-                  darkColor,
-
               fontSize:
                   9,
 
@@ -1934,63 +2107,38 @@ class LatihanView extends GetView<LatihanController> {
         ),
 
         Expanded(
-          flex: 2,
-
           child:
-              ClipRRect(
-            borderRadius:
-                BorderRadius.circular(
-              20,
+              LinearProgressIndicator(
+            value:
+                value,
+
+            minHeight:
+                7,
+
+            backgroundColor:
+                color.withOpacity(
+              0.15,
             ),
 
-            child:
-                LinearProgressIndicator(
-              value:
-                  safeScore,
-
-              minHeight:
-                  7,
-
-              backgroundColor:
-                  color.withOpacity(
-                0.13,
-              ),
-
-              valueColor:
-                  AlwaysStoppedAnimation<
-                      Color>(
+            color:
                 color,
-              ),
-            ),
           ),
         ),
 
         const SizedBox(
-          width: 9,
+          width: 8,
         ),
 
-        SizedBox(
-          width:
-              36,
+        Text(
+          '${(value * 100).round()}%',
 
-          child:
-              Text(
-            '$percentage%',
+          style:
+              GoogleFonts.poppins(
+            fontSize:
+                9,
 
-            textAlign:
-                TextAlign.right,
-
-            style:
-                GoogleFonts.poppins(
-              color:
-                  darkColor,
-
-              fontSize:
-                  10,
-
-              fontWeight:
-                  FontWeight.w700,
-            ),
+            fontWeight:
+                FontWeight.w700,
           ),
         ),
       ],
@@ -1998,7 +2146,7 @@ class LatihanView extends GetView<LatihanController> {
   }
 
   // ============================================================
-  // BOTTOM AREA
+  // BOTTOM
   // ============================================================
 
   Widget _buildBottomArea() {
@@ -2052,12 +2200,9 @@ class LatihanView extends GetView<LatihanController> {
   // ============================================================
 
   Widget _buildButton() {
-    // ==========================================================
-    // BELUM DIJAWAB
-    // ==========================================================
-
     if (!controller
-        .isAnswered.value) {
+        .isAnswered
+        .value) {
       final bool loading =
           controller
               .isChecking
@@ -2067,6 +2212,7 @@ class LatihanView extends GetView<LatihanController> {
           controller
               .selectedAnswer
               .value
+              .trim()
               .isNotEmpty;
 
       return SizedBox(
@@ -2083,7 +2229,8 @@ class LatihanView extends GetView<LatihanController> {
                       .checkAnswer,
 
           style:
-              ElevatedButton.styleFrom(
+              ElevatedButton
+                  .styleFrom(
             backgroundColor:
                 primaryColor,
 
@@ -2093,11 +2240,6 @@ class LatihanView extends GetView<LatihanController> {
             disabledBackgroundColor:
                 const Color(
               0xFFDCE7E6,
-            ),
-
-            disabledForegroundColor:
-                const Color(
-              0xFF94A4A5,
             ),
 
             elevation:
@@ -2123,6 +2265,7 @@ class LatihanView extends GetView<LatihanController> {
                         const SizedBox(
                           width:
                               20,
+
                           height:
                               20,
 
@@ -2158,12 +2301,13 @@ class LatihanView extends GetView<LatihanController> {
                               .center,
 
                       children: [
-                        const Icon(
-                          Icons
-                              .check_circle_rounded,
-
-                          size:
-                              23,
+                        Icon(
+                          controller
+                                  .isKetikMode
+                              ? Icons
+                                  .psychology_alt_rounded
+                              : Icons
+                                  .check_circle_rounded,
                         ),
 
                         const SizedBox(
@@ -2183,33 +2327,11 @@ class LatihanView extends GetView<LatihanController> {
                                 FontWeight.w700,
                           ),
                         ),
-
-                        const SizedBox(
-                          width:
-                              8,
-                        ),
-
-                        const Icon(
-                          Icons
-                              .arrow_forward_rounded,
-
-                          size:
-                              19,
-                        ),
                       ],
                     ),
         ),
       );
     }
-
-    // ==========================================================
-    // SUDAH DIJAWAB
-    // ==========================================================
-
-    final bool saving =
-        controller
-            .isSavingResult
-            .value;
 
     return SizedBox(
       height:
@@ -2218,23 +2340,21 @@ class LatihanView extends GetView<LatihanController> {
       child:
           ElevatedButton(
         onPressed:
-            saving
+            controller
+                    .isSavingResult
+                    .value
                 ? null
                 : controller
                     .nextQuestion,
 
         style:
-            ElevatedButton.styleFrom(
+            ElevatedButton
+                .styleFrom(
           backgroundColor:
               primaryColor,
 
           foregroundColor:
               Colors.white,
-
-          disabledBackgroundColor:
-              const Color(
-            0xFFDCE7E6,
-          ),
 
           elevation:
               0,
@@ -2249,403 +2369,30 @@ class LatihanView extends GetView<LatihanController> {
         ),
 
         child:
-            saving
-                ? Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment
-                            .center,
+            Text(
+          controller
+                  .isLastQuestion
+              ? 'Lihat Hasil'
+              : 'Soal Berikutnya',
 
-                    children: [
-                      const SizedBox(
-                        width:
-                            20,
-                        height:
-                            20,
-
-                        child:
-                            CircularProgressIndicator(
-                          strokeWidth:
-                              2,
-
-                          color:
-                              Colors.white,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        width:
-                            10,
-                      ),
-
-                      Text(
-                        'Menyimpan...',
-
-                        style:
-                            GoogleFonts.poppins(
-                          fontWeight:
-                              FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment
-                            .center,
-
-                    children: [
-                      Icon(
-                        controller
-                                .isLastQuestion
-                            ? Icons
-                                .flag_rounded
-                            : Icons
-                                .arrow_circle_right_rounded,
-
-                        size:
-                            24,
-                      ),
-
-                      const SizedBox(
-                        width:
-                            9,
-                      ),
-
-                      Text(
-                        controller
-                                .isLastQuestion
-                            ? 'Lihat Hasil'
-                            : 'Soal Berikutnya',
-
-                        style:
-                            GoogleFonts.poppins(
-                          fontSize:
-                              13,
-
-                          fontWeight:
-                              FontWeight.w700,
-                        ),
-                      ),
-
-                      if (!controller
-                          .isLastQuestion) ...[
-                        const SizedBox(
-                          width:
-                              7,
-                        ),
-
-                        const Icon(
-                          Icons
-                              .arrow_forward_rounded,
-
-                          size:
-                              18,
-                        ),
-                      ],
-                    ],
-                  ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // CHIP
-  // ============================================================
-
-  Widget _buildSmallChip({
-    required IconData icon,
-    required String text,
-    required Color color,
-    required Color background,
-  }) {
-    return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal:
-            8,
-        vertical:
-            4,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            background,
-
-        borderRadius:
-            BorderRadius.circular(
-          20,
-        ),
-      ),
-
-      child:
-          Row(
-        mainAxisSize:
-            MainAxisSize.min,
-
-        children: [
-          Icon(
-            icon,
-            color:
-                color,
-            size:
+          style:
+              GoogleFonts.poppins(
+            fontSize:
                 13,
+
+            fontWeight:
+                FontWeight.w700,
           ),
-
-          const SizedBox(
-            width: 4,
-          ),
-
-          Text(
-            text,
-
-            style:
-                GoogleFonts.poppins(
-              color:
-                  color,
-
-              fontSize:
-                  8,
-
-              fontWeight:
-                  FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   // ============================================================
-  // CATEGORY IMAGE
+  // LETTER
   // ============================================================
 
-  Widget _buildCategoryImage(
-    String category,
-  ) {
-    final String? asset =
-        _getCategoryAsset(
-      category,
-    );
-
-    if (asset ==
-        null) {
-      return const Icon(
-        Icons.auto_stories_rounded,
-        color: primaryColor,
-        size: 36,
-      );
-    }
-
-    return Image.asset(
-      asset,
-
-      fit:
-          BoxFit.contain,
-
-      errorBuilder: (
-        context,
-        error,
-        stackTrace,
-      ) {
-        return const Icon(
-          Icons.auto_stories_rounded,
-          color: primaryColor,
-          size: 36,
-        );
-      },
-    );
-  }
-
-  // ============================================================
-  // CATEGORY ASSET
-  // ============================================================
-
-  String? _getCategoryAsset(
-    String category,
-  ) {
-    final String value =
-        category
-            .toLowerCase()
-            .trim();
-
-    if (value.contains(
-      'nasihat',
-    )) {
-      return 'assets/images/kategori/daunicon.png';
-    }
-
-    if (value.contains(
-      'jenaka',
-    )) {
-      return 'assets/images/kategori/jenakaicon.png';
-    }
-
-    if (value.contains(
-      'teka',
-    )) {
-      return 'assets/images/kategori/teka_teki_icon.png';
-    }
-
-    if (value.contains(
-      'kiasan',
-    )) {
-      return 'assets/images/kategori/kiasanicon.png';
-    }
-
-    if (value.contains(
-      'agama',
-    )) {
-      return 'assets/images/kategori/agamaicon.png';
-    }
-
-    return null;
-  }
-
-  // ============================================================
-  // CATEGORY THEME
-  // ============================================================
-
-  _CategoryTheme _getCategoryTheme(
-    String category,
-  ) {
-    final String value =
-        category
-            .toLowerCase()
-            .trim();
-
-    if (value.contains(
-      'nasihat',
-    )) {
-      return const _CategoryTheme(
-        color: Color(
-          0xFF49A95D,
-        ),
-
-        background: Color(
-          0xFFF1F9EB,
-        ),
-
-        iconBackground: Color(
-          0xFFE1F3D8,
-        ),
-
-        chipBackground: Color(
-          0xFFDCF1D5,
-        ),
-      );
-    }
-
-    if (value.contains(
-      'jenaka',
-    )) {
-      return const _CategoryTheme(
-        color: Color(
-          0xFFF09B36,
-        ),
-
-        background: Color(
-          0xFFFFF6E8,
-        ),
-
-        iconBackground: Color(
-          0xFFFFEBC9,
-        ),
-
-        chipBackground: Color(
-          0xFFFFE8C0,
-        ),
-      );
-    }
-
-    if (value.contains(
-      'teka',
-    )) {
-      return const _CategoryTheme(
-        color: Color(
-          0xFF5196C7,
-        ),
-
-        background: Color(
-          0xFFEDF7FE,
-        ),
-
-        iconBackground: Color(
-          0xFFDDEFFA,
-        ),
-
-        chipBackground: Color(
-          0xFFDDEFFA,
-        ),
-      );
-    }
-
-    if (value.contains(
-      'kiasan',
-    )) {
-      return const _CategoryTheme(
-        color: Color(
-          0xFF8062D0,
-        ),
-
-        background: Color(
-          0xFFF5F1FF,
-        ),
-
-        iconBackground: Color(
-          0xFFEAE3FF,
-        ),
-
-        chipBackground: Color(
-          0xFFE8E0FF,
-        ),
-      );
-    }
-
-    if (value.contains(
-      'agama',
-    )) {
-      return const _CategoryTheme(
-        color: Color(
-          0xFF359C7A,
-        ),
-
-        background: Color(
-          0xFFEDF9F5,
-        ),
-
-        iconBackground: Color(
-          0xFFDDF3EB,
-        ),
-
-        chipBackground: Color(
-          0xFFDDF2EA,
-        ),
-      );
-    }
-
-    return const _CategoryTheme(
-      color: primaryColor,
-
-      background: Color(
-        0xFFF0FAF8,
-      ),
-
-      iconBackground: Color(
-        0xFFDFF4F0,
-      ),
-
-      chipBackground: Color(
-        0xFFDDF4F0,
-      ),
-    );
-  }
-
-  // ============================================================
-  // OPTION LETTER
-  // ============================================================
-
-  String _optionLetter(
+  String _letter(
     int index,
   ) {
     const letters = [
@@ -2657,9 +2404,8 @@ class LatihanView extends GetView<LatihanController> {
       'F',
     ];
 
-    if (index >= 0 &&
-        index <
-            letters.length) {
+    if (index <
+        letters.length) {
       return letters[index];
     }
 
@@ -2667,188 +2413,75 @@ class LatihanView extends GetView<LatihanController> {
   }
 
   // ============================================================
-  // CAPITALIZE
-  // ============================================================
-
-  String _capitalize(
-    String text,
-  ) {
-    if (text
-        .trim()
-        .isEmpty) {
-      return '-';
-    }
-
-    final value =
-        text.trim();
-
-    return '${value[0].toUpperCase()}'
-        '${value.substring(1).toLowerCase()}';
-  }
-
-  // ============================================================
   // ERROR
   // ============================================================
 
   Widget _buildError() {
-    return Scaffold(
-      backgroundColor:
-          backgroundColor,
+    return Center(
+      child:
+          Padding(
+        padding:
+            const EdgeInsets.all(
+          30,
+        ),
 
-      body:
-          SafeArea(
         child:
-            Center(
-          child:
-              Padding(
-            padding:
-                const EdgeInsets.all(
-              30,
+            Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
+          children: [
+            const Icon(
+              Icons
+                  .error_outline_rounded,
+
+              color:
+                  errorColor,
+
+              size:
+                  60,
             ),
 
-            child:
-                Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
+            const SizedBox(
+              height: 15,
+            ),
 
-              children: [
-                Container(
-                  width:
-                      80,
+            Text(
+              controller
+                  .errorMessage
+                  .value,
 
-                  height:
-                      80,
+              textAlign:
+                  TextAlign.center,
 
-                  decoration:
-                      const BoxDecoration(
-                    color:
-                        Color(
-                      0xFFFFEAEA,
-                    ),
+              style:
+                  GoogleFonts.poppins(
+                color:
+                    darkColor,
+              ),
+            ),
 
-                    shape:
-                        BoxShape.circle,
-                  ),
+            const SizedBox(
+              height: 15,
+            ),
 
-                  child:
-                      const Icon(
-                    Icons
-                        .cloud_off_rounded,
-
-                    color:
-                        errorColor,
-
-                    size:
-                        39,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 18,
-                ),
-
-                Text(
-                  'Ups, terjadi masalah',
-
-                  textAlign:
-                      TextAlign.center,
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        darkColor,
-
-                    fontSize:
-                        18,
-
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 7,
-                ),
-
-                Text(
+            ElevatedButton.icon(
+              onPressed:
                   controller
-                      .errorMessage
-                      .value,
+                      .loadQuestions,
 
-                  textAlign:
-                      TextAlign.center,
+              icon:
+                  const Icon(
+                Icons
+                    .refresh_rounded,
+              ),
 
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        secondaryText,
-
-                    fontSize:
-                        11,
-
-                    height:
-                        1.5,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 22,
-                ),
-
-                ElevatedButton.icon(
-                  onPressed:
-                      controller
-                          .loadQuestions,
-
-                  style:
-                      ElevatedButton.styleFrom(
-                    backgroundColor:
-                        primaryColor,
-
-                    foregroundColor:
-                        Colors.white,
-
-                    elevation:
-                        0,
-
-                    padding:
-                        const EdgeInsets.symmetric(
-                      horizontal:
-                          22,
-
-                      vertical:
-                          13,
-                    ),
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        15,
-                      ),
-                    ),
-                  ),
-
-                  icon:
-                      const Icon(
-                    Icons
-                        .refresh_rounded,
-                  ),
-
-                  label:
-                      Text(
-                    'Coba Lagi',
-
-                    style:
-                        GoogleFonts.poppins(
-                      fontWeight:
-                          FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+              label:
+                  const Text(
+                'Coba Lagi',
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -2859,118 +2492,57 @@ class LatihanView extends GetView<LatihanController> {
   // ============================================================
 
   Widget _buildEmpty() {
-    return Scaffold(
-      backgroundColor:
-          backgroundColor,
+    return Center(
+      child:
+          Column(
+        mainAxisAlignment:
+            MainAxisAlignment.center,
 
-      body:
-          SafeArea(
-        child:
-            Center(
-          child:
-              Padding(
-            padding:
-                const EdgeInsets.all(
-              30,
-            ),
+        children: [
+          const Icon(
+            Icons.quiz_outlined,
 
-            child:
-                Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
+            color:
+                primaryColor,
 
-              children: [
-                Container(
-                  width:
-                      85,
+            size:
+                60,
+          ),
 
-                  height:
-                      85,
+          const SizedBox(
+            height: 12,
+          ),
 
-                  decoration:
-                      const BoxDecoration(
-                    color:
-                        primaryLight,
+          Text(
+            'Belum Ada Soal',
 
-                    shape:
-                        BoxShape.circle,
-                  ),
+            style:
+                GoogleFonts.poppins(
+              color:
+                  darkColor,
 
-                  child:
-                      const Icon(
-                    Icons
-                        .quiz_outlined,
+              fontSize:
+                  18,
 
-                    color:
-                        primaryColor,
-
-                    size:
-                        43,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 18,
-                ),
-
-                Text(
-                  'Belum Ada Soal',
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        darkColor,
-
-                    fontSize:
-                        18,
-
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 6,
-                ),
-
-                Text(
-                  'Belum ada soal untuk pantun ini.',
-
-                  textAlign:
-                      TextAlign.center,
-
-                  style:
-                      GoogleFonts.poppins(
-                    color:
-                        secondaryText,
-
-                    fontSize:
-                        11,
-                  ),
-                ),
-              ],
+              fontWeight:
+                  FontWeight.w700,
             ),
           ),
-        ),
+
+          Text(
+            'Belum ada soal untuk pantun ini.',
+
+            style:
+                GoogleFonts.poppins(
+              color:
+                  secondaryText,
+
+              fontSize:
+                  10,
+            ),
+          ),
+        ],
       ),
     );
   }
-}
-
-// ============================================================
-// CATEGORY THEME
-// ============================================================
-
-class _CategoryTheme {
-  final Color color;
-  final Color background;
-  final Color iconBackground;
-  final Color chipBackground;
-
-  const _CategoryTheme({
-    required this.color,
-    required this.background,
-    required this.iconBackground,
-    required this.chipBackground,
-  });
 }
