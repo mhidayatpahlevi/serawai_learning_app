@@ -30,12 +30,12 @@ class HomeView extends GetView<HomeController> {
 
               const SizedBox(height: 26),
 
-              // ==========================================================
-              // SEARCH
-              // ==========================================================
-              _buildSearchBar(),
+              // // ==========================================================
+              // // SEARCH
+              // // ==========================================================
+              // _buildSearchBar(),
 
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
 
               // ==========================================================
               // HERO / LATIHAN UTAMA
@@ -204,46 +204,46 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  // ============================================================
-  // SEARCH BAR
-  // ============================================================
+  // // ============================================================
+  // // SEARCH BAR
+  // // ============================================================
 
-  Widget _buildSearchBar() {
-    return Container(
-      height: 54,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFE8EFF2),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
-            blurRadius: 16,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: const TextField(
-        decoration: InputDecoration(
-          hintText: 'Cari pantun, kata, atau kategori...',
-          hintStyle: TextStyle(
-            color: Color(0xFFA3ADBD),
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: darkColor,
-          ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 16,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildSearchBar() {
+  //   return Container(
+  //     height: 54,
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(18),
+  //       border: Border.all(
+  //         color: const Color(0xFFE8EFF2),
+  //       ),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withValues(alpha: 0.035),
+  //           blurRadius: 16,
+  //           offset: const Offset(0, 5),
+  //         ),
+  //       ],
+  //     ),
+  //     child: const TextField(
+  //       decoration: InputDecoration(
+  //         hintText: 'Cari pantun, kata, atau kategori...',
+  //         hintStyle: TextStyle(
+  //           color: Color(0xFFA3ADBD),
+  //           fontSize: 14,
+  //         ),
+  //         prefixIcon: Icon(
+  //           Icons.search_rounded,
+  //           color: darkColor,
+  //         ),
+  //         border: InputBorder.none,
+  //         contentPadding: EdgeInsets.symmetric(
+  //           vertical: 16,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // ============================================================
   // HERO CARD
