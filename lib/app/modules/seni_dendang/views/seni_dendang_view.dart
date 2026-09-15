@@ -49,7 +49,7 @@ class SeniDendangView extends StatelessWidget {
               // ====================================================
               _buildSectionTitle(
                 icon: Icons.music_note_rounded,
-                title: 'Apo Itu Seni Dendang?',
+                title: 'Apa Itu Seni Dendang?',
               ),
 
               const SizedBox(height: 12),
