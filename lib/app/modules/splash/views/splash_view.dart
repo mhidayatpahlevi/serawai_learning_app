@@ -23,6 +23,7 @@ class SplashView extends GetView<SplashController> {
             // ============================================================
             // GAMBAR UTAMA
             // ============================================================
+
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -57,6 +58,7 @@ class SplashView extends GetView<SplashController> {
                   // ======================================================
                   // LABEL
                   // ======================================================
+
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 13,
@@ -139,10 +141,24 @@ class SplashView extends GetView<SplashController> {
                   const SizedBox(height: 24),
 
                   // ======================================================
-                  // BUTTON LANJUTKAN
+                  // BUTTON / SESSION CHECK
                   // ======================================================
-                  Obx(
-                    () => SizedBox(
+                  Obx(() {
+                    // Sedang mengecek apakah pengguna lama
+                    // masih mempunyai sesi login.
+                    if (controller.isCheckingSession.value) {
+                      return const SizedBox(
+                        height: 56,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: primaryColor,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: FilledButton(
@@ -155,10 +171,10 @@ class SplashView extends GetView<SplashController> {
                           disabledBackgroundColor: primaryColor.withValues(
                             alpha: 0.6,
                           ),
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
-                          elevation: 0,
                         ),
                         child: controller.isNavigating.value
                             ? const SizedBox(
@@ -187,14 +203,11 @@ class SplashView extends GetView<SplashController> {
                                 ],
                               ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
 
                   const SizedBox(height: 14),
 
-                  // ======================================================
-                  // FOOTER
-                  // ======================================================
                   Text(
                     'Serawai • Bengkulu Selatan',
                     textAlign: TextAlign.center,
