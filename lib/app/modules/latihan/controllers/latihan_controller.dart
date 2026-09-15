@@ -1631,7 +1631,7 @@ class LatihanController extends GetxController {
                   darkColor,
 
               fontSize:
-                  15,
+                  18,
 
               fontWeight:
                   FontWeight.w800,
