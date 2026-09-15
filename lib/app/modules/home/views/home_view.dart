@@ -398,18 +398,18 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
 
-            Icon(Icons.bookmark_border_rounded, color: primaryColor, size: 21),
+            // Icon(Icons.bookmark_border_rounded, color: primaryColor, size: 21),
 
             SizedBox(width: 4),
 
-            Text(
-              'Simpan',
-              style: TextStyle(
-                color: primaryColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-              ),
-            ),
+            // Text(
+            //   'Simpan',
+            //   style: TextStyle(
+            //     color: primaryColor,
+            //     fontWeight: FontWeight.w600,
+            //     fontSize: 13,
+            //   ),
+            // ),
           ],
         ),
 
@@ -458,18 +458,18 @@ class HomeView extends GetView<HomeController> {
 
               const SizedBox(width: 8),
 
-              Container(
-                width: 45,
-                height: 45,
-                decoration: const BoxDecoration(
-                  color: primaryColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.arrow_forward_rounded,
-                  color: Colors.white,
-                ),
-              ),
+              // Container(
+              //   width: 45,
+              //   height: 45,
+              //   decoration: const BoxDecoration(
+              //     color: primaryColor,
+              //     shape: BoxShape.circle,
+              //   ),
+              //   child: const Icon(
+              //     Icons.arrow_forward_rounded,
+              //     color: Colors.white,
+              //   ),
+              // ),
             ],
           ),
         ),
