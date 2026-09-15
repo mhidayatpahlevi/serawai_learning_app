@@ -1,33 +1,37 @@
 import 'package:get/get.dart';
 
-import '../../../data/services/auth_service.dart';
 import '../../../routes/app_routes.dart';
 
 class SplashController extends GetxController {
-  final AuthService _authService = Get.find<AuthService>();
+  // =====================================
+  // STATE
+  // =====================================
 
-  @override
-  void onReady() {
-    super.onReady();
-    checkAuthentication();
-  }
+  final isNavigating = false.obs;
 
-  Future<void> checkAuthentication() async {
+  // =====================================
+  // LANJUT KE LOGIN
+  // =====================================
+
+  Future<void> continueToLogin() async {
+    if (isNavigating.value) {
+      return;
+    }
+
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      isNavigating.value = true;
 
-      final user = await _authService.authStateChanges.first;
+      // Sedikit delay agar interaksi tombol terasa halus.
+      await Future.delayed(const Duration(milliseconds: 250));
 
-      if (isClosed) return;
-
-      if (user != null) {
-        Get.offAllNamed(Routes.home);
-      } else {
-        Get.offAllNamed(Routes.login);
+      if (isClosed) {
+        return;
       }
-    } catch (error) {
+
+      Get.offAllNamed(Routes.login);
+    } finally {
       if (!isClosed) {
-        Get.offAllNamed(Routes.login);
+        isNavigating.value = false;
       }
     }
   }
