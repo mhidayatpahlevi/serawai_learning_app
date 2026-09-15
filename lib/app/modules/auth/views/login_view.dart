@@ -22,7 +22,9 @@ class LoginView extends GetView<AuthController> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         leading: IconButton(
-          onPressed: Get.back,
+          onPressed: () {
+  Get.offAllNamed(Routes.splash);
+},
           icon: const Icon(
             Icons.arrow_back_rounded,
             color: darkTextColor,
