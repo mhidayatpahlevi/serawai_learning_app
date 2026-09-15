@@ -6,9 +6,7 @@ import '../../../data/models/pantun_model.dart';
 import '../controllers/pantun_controller.dart';
 
 class PantunView extends GetView<PantunController> {
-  const PantunView({
-    super.key,
-  });
+  const PantunView({super.key});
 
   // ============================================================
   // COLORS
@@ -34,10 +32,7 @@ class PantunView extends GetView<PantunController> {
             Get.back();
           },
 
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: darkColor,
-          ),
+          icon: const Icon(Icons.arrow_back_rounded, color: darkColor),
         ),
 
         title: Column(
@@ -67,108 +62,83 @@ class PantunView extends GetView<PantunController> {
         centerTitle: true,
       ),
 
-      body: Obx(
-        () {
-          // ====================================================
-          // LOADING
-          // ====================================================
+      body: Obx(() {
+        // ====================================================
+        // LOADING
+        // ====================================================
 
-          if (controller.isLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
-            );
-          }
-
-          // ====================================================
-          // ERROR
-          // ====================================================
-
-          if (controller.errorMessage.value.isNotEmpty) {
-            return _buildError();
-          }
-
-          // ====================================================
-          // EMPTY
-          // ====================================================
-
-          if (controller.pantunList.isEmpty) {
-            return _buildEmpty();
-          }
-
-          // ====================================================
-          // CONTENT
-          // ====================================================
-
-          return RefreshIndicator(
-            color: primaryColor,
-            onRefresh: controller.refreshPantun,
-
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
-
-              padding: const EdgeInsets.fromLTRB(
-                16,
-                8,
-                16,
-                30,
-              ),
-
-              children: [
-                // ===============================================
-                // HEADER
-                // ===============================================
-
-                _buildHeaderCard(),
-
-                const SizedBox(
-                  height: 22,
-                ),
-
-                // ===============================================
-                // SECTION HEADER
-                // ===============================================
-
-                _buildSectionHeader(),
-
-                const SizedBox(
-                  height: 12,
-                ),
-
-                // ===============================================
-                // LIST PANTUN
-                // ===============================================
-
-                ...List.generate(
-                  controller.pantunList.length,
-                  (index) {
-                    final PantunModel pantun =
-                        controller.pantunList[index];
-
-                    return _buildPantunCard(
-                      pantun,
-                      index,
-                    );
-                  },
-                ),
-
-                const SizedBox(
-                  height: 5,
-                ),
-
-                // ===============================================
-                // FOOTER
-                // ===============================================
-
-                _buildFooter(),
-              ],
-            ),
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: primaryColor),
           );
-        },
-      ),
+        }
+
+        // ====================================================
+        // ERROR
+        // ====================================================
+
+        if (controller.errorMessage.value.isNotEmpty) {
+          return _buildError();
+        }
+
+        // ====================================================
+        // EMPTY
+        // ====================================================
+
+        if (controller.pantunList.isEmpty) {
+          return _buildEmpty();
+        }
+
+        // ====================================================
+        // CONTENT
+        // ====================================================
+
+        return RefreshIndicator(
+          color: primaryColor,
+          onRefresh: controller.refreshPantun,
+
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 30),
+
+            children: [
+              // ===============================================
+              // HEADER
+              // ===============================================
+
+              _buildHeaderCard(),
+
+              const SizedBox(height: 22),
+
+              // ===============================================
+              // SECTION HEADER
+              // ===============================================
+              _buildSectionHeader(),
+
+              const SizedBox(height: 12),
+
+              // ===============================================
+              // LIST PANTUN
+              // ===============================================
+              ...List.generate(controller.pantunList.length, (index) {
+                final PantunModel pantun = controller.pantunList[index];
+
+                return _buildPantunCard(pantun, index);
+              }),
+
+              const SizedBox(height: 5),
+
+              // ===============================================
+              // FOOTER
+              // ===============================================
+              _buildFooter(),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -177,42 +147,28 @@ class PantunView extends GetView<PantunController> {
   // ============================================================
 
   Widget _buildHeaderCard() {
-    final String category =
-        controller.pantunList.isNotEmpty
-            ? controller.pantunList.first.kategori
-            : '';
+    final String category = controller.pantunList.isNotEmpty
+        ? controller.pantunList.first.kategori
+        : '';
 
-    final _PantunTheme theme = _getTheme(
-      category,
-    );
+    final _PantunTheme theme = _getTheme(category);
 
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.all(
-        18,
-      ),
+      padding: const EdgeInsets.all(18),
 
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            theme.background,
-            Colors.white,
-          ],
+          colors: [theme.background, Colors.white],
 
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
 
-        borderRadius: BorderRadius.circular(
-          26,
-        ),
+        borderRadius: BorderRadius.circular(26),
 
-        border: Border.all(
-          color: theme.color.withOpacity(
-            0.08,
-          ),
-        ),
+        border: Border.all(color: theme.color.withOpacity(0.08)),
       ),
 
       child: Row(
@@ -225,32 +181,22 @@ class PantunView extends GetView<PantunController> {
             width: 78,
             height: 78,
 
-            padding: const EdgeInsets.all(
-              13,
-            ),
+            padding: const EdgeInsets.all(13),
 
             decoration: BoxDecoration(
               color: theme.iconBackground,
 
-              borderRadius: BorderRadius.circular(
-                22,
-              ),
+              borderRadius: BorderRadius.circular(22),
             ),
 
-            child: _buildCategoryImage(
-              category,
-              size: 52,
-            ),
+            child: _buildCategoryImage(category, size: 52),
           ),
 
-          const SizedBox(
-            width: 15,
-          ),
+          const SizedBox(width: 15),
 
           // ====================================================
           // HEADER INFORMATION
           // ====================================================
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,9 +212,7 @@ class PantunView extends GetView<PantunController> {
                   ),
                 ),
 
-                const SizedBox(
-                  height: 2,
-                ),
+                const SizedBox(height: 2),
 
                 Text(
                   '${controller.pantunList.length} Pantun',
@@ -280,9 +224,7 @@ class PantunView extends GetView<PantunController> {
                   ),
                 ),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -293,9 +235,7 @@ class PantunView extends GetView<PantunController> {
                   decoration: BoxDecoration(
                     color: theme.chipBackground,
 
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ),
+                    borderRadius: BorderRadius.circular(20),
                   ),
 
                   child: Row(
@@ -303,23 +243,17 @@ class PantunView extends GetView<PantunController> {
 
                     children: [
                       Icon(
-                        _getCategoryFallbackIcon(
-                          category,
-                        ),
+                        _getCategoryFallbackIcon(category),
 
                         size: 14,
                         color: theme.color,
                       ),
 
-                      const SizedBox(
-                        width: 5,
-                      ),
+                      const SizedBox(width: 5),
 
                       Flexible(
                         child: Text(
-                          category.isEmpty
-                              ? 'Pantun'
-                              : category,
+                          category.isEmpty ? 'Pantun' : category,
 
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -335,14 +269,10 @@ class PantunView extends GetView<PantunController> {
                   ),
                 ),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
                 Text(
-                  _getCategoryDescription(
-                    category,
-                  ),
+                  _getCategoryDescription(category),
 
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -381,19 +311,12 @@ class PantunView extends GetView<PantunController> {
         ),
 
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 11,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
 
           decoration: BoxDecoration(
-            color: const Color(
-              0xFFE3F6F3,
-            ),
+            color: const Color(0xFFE3F6F3),
 
-            borderRadius: BorderRadius.circular(
-              20,
-            ),
+            borderRadius: BorderRadius.circular(20),
           ),
 
           child: Row(
@@ -406,9 +329,7 @@ class PantunView extends GetView<PantunController> {
                 color: primaryColor,
               ),
 
-              const SizedBox(
-                width: 4,
-              ),
+              const SizedBox(width: 4),
 
               Text(
                 '${controller.pantunList.length} pantun',
@@ -430,60 +351,37 @@ class PantunView extends GetView<PantunController> {
   // PANTUN CARD
   // ============================================================
 
-  Widget _buildPantunCard(
-    PantunModel pantun,
-    int index,
-  ) {
-    final _PantunTheme theme =
-        _getTheme(
-      pantun.kategori,
-    );
+  Widget _buildPantunCard(PantunModel pantun, int index) {
+    final _PantunTheme theme = _getTheme(pantun.kategori);
 
-    final int number =
-        pantun.orderInCategory > 0
-            ? pantun.orderInCategory
-            : index + 1;
+    final int number = pantun.orderInCategory > 0
+        ? pantun.orderInCategory
+        : index + 1;
 
     return Container(
-      margin: const EdgeInsets.only(
-        bottom: 12,
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
 
       child: Material(
         color: Colors.transparent,
 
-        borderRadius: BorderRadius.circular(
-          22,
-        ),
+        borderRadius: BorderRadius.circular(22),
 
         child: InkWell(
-          borderRadius: BorderRadius.circular(
-            22,
-          ),
+          borderRadius: BorderRadius.circular(22),
 
           onTap: () {
-            controller.openPantun(
-              pantun,
-            );
+            controller.openPantun(pantun);
           },
 
           child: Ink(
-            padding: const EdgeInsets.all(
-              13,
-            ),
+            padding: const EdgeInsets.all(13),
 
             decoration: BoxDecoration(
               color: theme.background,
 
-              borderRadius: BorderRadius.circular(
-                22,
-              ),
+              borderRadius: BorderRadius.circular(22),
 
-              border: Border.all(
-                color: theme.color.withOpacity(
-                  0.05,
-                ),
-              ),
+              border: Border.all(color: theme.color.withOpacity(0.05)),
             ),
 
             child: Row(
@@ -500,22 +398,15 @@ class PantunView extends GetView<PantunController> {
                       width: 76,
                       height: 76,
 
-                      padding: const EdgeInsets.all(
-                        12,
-                      ),
+                      padding: const EdgeInsets.all(12),
 
                       decoration: BoxDecoration(
                         color: theme.iconBackground,
 
-                        borderRadius: BorderRadius.circular(
-                          19,
-                        ),
+                        borderRadius: BorderRadius.circular(19),
                       ),
 
-                      child: _buildCategoryImage(
-                        pantun.kategori,
-                        size: 52,
-                      ),
+                      child: _buildCategoryImage(pantun.kategori, size: 52),
                     ),
 
                     Positioned(
@@ -533,16 +424,11 @@ class PantunView extends GetView<PantunController> {
 
                           shape: BoxShape.circle,
 
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2,
-                          ),
+                          border: Border.all(color: Colors.white, width: 2),
 
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(
-                                0.08,
-                              ),
+                              color: Colors.black.withOpacity(0.08),
 
                               blurRadius: 5,
                             ),
@@ -563,14 +449,11 @@ class PantunView extends GetView<PantunController> {
                   ],
                 ),
 
-                const SizedBox(
-                  width: 14,
-                ),
+                const SizedBox(width: 14),
 
                 // =================================================
                 // INFORMATION
                 // =================================================
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -581,8 +464,7 @@ class PantunView extends GetView<PantunController> {
 
                         maxLines: 2,
 
-                        overflow:
-                            TextOverflow.ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
                         style: GoogleFonts.poppins(
                           color: darkColor,
@@ -591,24 +473,18 @@ class PantunView extends GetView<PantunController> {
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 4,
-                      ),
+                      const SizedBox(height: 4),
 
                       Row(
                         children: [
                           Icon(
-                            _getCategoryFallbackIcon(
-                              pantun.kategori,
-                            ),
+                            _getCategoryFallbackIcon(pantun.kategori),
 
                             size: 13,
                             color: theme.color,
                           ),
 
-                          const SizedBox(
-                            width: 4,
-                          ),
+                          const SizedBox(width: 4),
 
                           Expanded(
                             child: Text(
@@ -616,8 +492,7 @@ class PantunView extends GetView<PantunController> {
 
                               maxLines: 1,
 
-                              overflow:
-                                  TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis,
 
                               style: GoogleFonts.poppins(
                                 color: secondaryText,
@@ -628,9 +503,7 @@ class PantunView extends GetView<PantunController> {
                         ],
                       ),
 
-                      const SizedBox(
-                        height: 9,
-                      ),
+                      const SizedBox(height: 9),
 
                       Wrap(
                         spacing: 7,
@@ -645,21 +518,18 @@ class PantunView extends GetView<PantunController> {
 
                             color: theme.color,
 
-                            background:
-                                theme.chipBackground,
+                            background: theme.chipBackground,
                           ),
 
                           _buildChip(
-                            icon:
-                                Icons.music_note_rounded,
+                            icon: Icons.music_note_rounded,
 
                             text:
                                 'Rima: ${pantun.polaRima.isEmpty ? '-' : pantun.polaRima}',
 
                             color: theme.color,
 
-                            background:
-                                theme.chipBackground,
+                            background: theme.chipBackground,
                           ),
                         ],
                       ),
@@ -667,14 +537,11 @@ class PantunView extends GetView<PantunController> {
                   ),
                 ),
 
-                const SizedBox(
-                  width: 7,
-                ),
+                const SizedBox(width: 7),
 
                 // =================================================
                 // ARROW
                 // =================================================
-
                 Container(
                   width: 42,
                   height: 42,
@@ -709,32 +576,21 @@ class PantunView extends GetView<PantunController> {
     required Color background,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
 
       decoration: BoxDecoration(
         color: background,
 
-        borderRadius: BorderRadius.circular(
-          20,
-        ),
+        borderRadius: BorderRadius.circular(20),
       ),
 
       child: Row(
         mainAxisSize: MainAxisSize.min,
 
         children: [
-          Icon(
-            icon,
-            size: 12,
-            color: color,
-          ),
+          Icon(icon, size: 12, color: color),
 
-          const SizedBox(
-            width: 4,
-          ),
+          const SizedBox(width: 4),
 
           Text(
             text,
@@ -754,25 +610,13 @@ class PantunView extends GetView<PantunController> {
   // NORMALISASI CATEGORY
   // ============================================================
 
-  String _categoryKey(
-    String category,
-  ) {
-    final String value =
-        category
-            .toLowerCase()
-            .trim()
-            .replaceAll(
-              '_',
-              ' ',
-            )
-            .replaceAll(
-              '-',
-              ' ',
-            )
-            .replaceAll(
-              RegExp(r'\s+'),
-              ' ',
-            );
+  String _categoryKey(String category) {
+    final String value = category
+        .toLowerCase()
+        .trim()
+        .replaceAll('_', ' ')
+        .replaceAll('-', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ');
 
     if (value.contains('nasihat')) {
       return 'nasihat';
@@ -801,31 +645,15 @@ class PantunView extends GetView<PantunController> {
   // CATEGORY IMAGE
   // ============================================================
 
-  Widget _buildCategoryImage(
-    String category, {
-    double size = 45,
-  }) {
-    final String? path =
-        _getCategoryAsset(
-      category,
-    );
+  Widget _buildCategoryImage(String category, {double size = 45}) {
+    final String? path = _getCategoryAsset(category);
 
-    final IconData fallback =
-        _getCategoryFallbackIcon(
-      category,
-    );
+    final IconData fallback = _getCategoryFallbackIcon(category);
 
-    final Color color =
-        _getTheme(
-      category,
-    ).color;
+    final Color color = _getTheme(category).color;
 
     if (path == null) {
-      return Icon(
-        fallback,
-        color: color,
-        size: size,
-      );
+      return Icon(fallback, color: color, size: size);
     }
 
     return Image.asset(
@@ -836,16 +664,8 @@ class PantunView extends GetView<PantunController> {
 
       fit: BoxFit.contain,
 
-      errorBuilder: (
-        context,
-        error,
-        stackTrace,
-      ) {
-        return Icon(
-          fallback,
-          color: color,
-          size: size,
-        );
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(fallback, color: color, size: size);
       },
     );
   }
@@ -854,9 +674,7 @@ class PantunView extends GetView<PantunController> {
   // CATEGORY ASSET
   // ============================================================
 
-  String? _getCategoryAsset(
-    String category,
-  ) {
+  String? _getCategoryAsset(String category) {
     switch (_categoryKey(category)) {
       case 'nasihat':
         return 'assets/images/kategori/daunicon.png';
@@ -882,9 +700,7 @@ class PantunView extends GetView<PantunController> {
   // FALLBACK ICON
   // ============================================================
 
-  IconData _getCategoryFallbackIcon(
-    String category,
-  ) {
+  IconData _getCategoryFallbackIcon(String category) {
     switch (_categoryKey(category)) {
       case 'nasihat':
         return Icons.eco_rounded;
@@ -910,9 +726,7 @@ class PantunView extends GetView<PantunController> {
   // CATEGORY DESCRIPTION
   // ============================================================
 
-  String _getCategoryDescription(
-    String category,
-  ) {
+  String _getCategoryDescription(String category) {
     switch (_categoryKey(category)) {
       case 'nasihat':
         return 'Pelajari pesan kehidupan dan petuah melalui pantun.';
@@ -938,9 +752,7 @@ class PantunView extends GetView<PantunController> {
   // THEME
   // ============================================================
 
-  _PantunTheme _getTheme(
-    String category,
-  ) {
+  _PantunTheme _getTheme(String category) {
     switch (_categoryKey(category)) {
       // ========================================================
       // NASIHAT
@@ -1030,35 +842,21 @@ class PantunView extends GetView<PantunController> {
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 18,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
 
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFE5F9F6),
-            Color(0xFFF0FBFC),
-          ],
+          colors: [Color(0xFFE5F9F6), Color(0xFFF0FBFC)],
         ),
 
-        borderRadius: BorderRadius.circular(
-          22,
-        ),
+        borderRadius: BorderRadius.circular(22),
       ),
 
       child: Row(
         children: [
-          const Icon(
-            Icons.eco_rounded,
-            color: Color(0xFF48AD83),
-            size: 28,
-          ),
+          const Icon(Icons.eco_rounded, color: Color(0xFF48AD83), size: 28),
 
-          const SizedBox(
-            width: 8,
-          ),
+          const SizedBox(width: 8),
 
           Expanded(
             child: Text(
@@ -1077,15 +875,9 @@ class PantunView extends GetView<PantunController> {
             ),
           ),
 
-          const SizedBox(
-            width: 8,
-          ),
+          const SizedBox(width: 8),
 
-          const Icon(
-            Icons.auto_stories_rounded,
-            color: primaryColor,
-            size: 27,
-          ),
+          const Icon(Icons.auto_stories_rounded, color: primaryColor, size: 27),
         ],
       ),
     );
@@ -1099,93 +891,60 @@ class PantunView extends GetView<PantunController> {
     return RefreshIndicator(
       color: primaryColor,
 
-      onRefresh:
-          controller.refreshPantun,
+      onRefresh: controller.refreshPantun,
 
       child: ListView(
-        physics:
-            const AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
 
         children: [
-          const SizedBox(
-            height: 150,
-          ),
+          const SizedBox(height: 150),
 
           Container(
             width: 85,
             height: 85,
 
-            margin:
-                const EdgeInsets.symmetric(
-              horizontal: 150,
+            margin: const EdgeInsets.symmetric(horizontal: 150),
+
+            decoration: const BoxDecoration(
+              color: Color(0xFFE4F7F4),
+
+              shape: BoxShape.circle,
             ),
 
-            decoration:
-                const BoxDecoration(
-              color:
-                  Color(
-                0xFFE4F7F4,
-              ),
-
-              shape:
-                  BoxShape.circle,
-            ),
-
-            child:
-                const Icon(
+            child: const Icon(
               Icons.auto_stories_outlined,
 
-              size:
-                  43,
+              size: 43,
 
-              color:
-                  primaryColor,
+              color: primaryColor,
             ),
           ),
 
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
 
           Center(
-            child:
-                Text(
+            child: Text(
               'Belum Ada Pantun',
 
-              style:
-                  GoogleFonts.poppins(
-                color:
-                    darkColor,
+              style: GoogleFonts.poppins(
+                color: darkColor,
 
-                fontSize:
-                    17,
+                fontSize: 17,
 
-                fontWeight:
-                    FontWeight.w700,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
 
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
 
           Center(
-            child:
-                Text(
+            child: Text(
               'Belum ada data pantun pada kategori ini.',
 
-              textAlign:
-                  TextAlign.center,
+              textAlign: TextAlign.center,
 
-              style:
-                  GoogleFonts.poppins(
-                color:
-                    secondaryText,
-
-                fontSize:
-                    10,
-              ),
+              style: GoogleFonts.poppins(color: secondaryText, fontSize: 10),
             ),
           ),
         ],
@@ -1200,141 +959,91 @@ class PantunView extends GetView<PantunController> {
   Widget _buildError() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(
-          24,
-        ),
+        padding: const EdgeInsets.all(24),
 
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
             Container(
-              width:
-                  80,
+              width: 80,
 
-              height:
-                  80,
+              height: 80,
 
-              decoration:
-                  const BoxDecoration(
-                color:
-                    Color(
-                  0xFFFFECEC,
-                ),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFECEC),
 
-                shape:
-                    BoxShape.circle,
+                shape: BoxShape.circle,
               ),
 
-              child:
-                  const Icon(
+              child: const Icon(
                 Icons.cloud_off_rounded,
 
-                size:
-                    40,
+                size: 40,
 
-                color:
-                    Color(
-                  0xFFE36B6B,
-                ),
+                color: Color(0xFFE36B6B),
               ),
             ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             Text(
               'Gagal Memuat Pantun',
 
-              style:
-                  GoogleFonts.poppins(
-                color:
-                    darkColor,
+              style: GoogleFonts.poppins(
+                color: darkColor,
 
-                fontSize:
-                    18,
+                fontSize: 18,
 
-                fontWeight:
-                    FontWeight.w800,
+                fontWeight: FontWeight.w800,
               ),
             ),
 
-            const SizedBox(
-              height: 6,
-            ),
+            const SizedBox(height: 6),
 
             Text(
               controller.errorMessage.value,
 
-              textAlign:
-                  TextAlign.center,
+              textAlign: TextAlign.center,
 
-              style:
-                  GoogleFonts.poppins(
-                color:
-                    secondaryText,
+              style: GoogleFonts.poppins(
+                color: secondaryText,
 
-                fontSize:
-                    11,
+                fontSize: 11,
 
-                height:
-                    1.5,
+                height: 1.5,
               ),
             ),
 
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
 
             ElevatedButton.icon(
-              onPressed:
-                  controller.loadPantun,
+              onPressed: controller.loadPantun,
 
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    primaryColor,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
 
-                foregroundColor:
-                    Colors.white,
+                foregroundColor: Colors.white,
 
-                elevation:
-                    0,
+                elevation: 0,
 
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal:
-                      20,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
 
-                  vertical:
-                      12,
+                  vertical: 12,
                 ),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    14,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
 
-              icon:
-                  const Icon(
-                Icons.refresh_rounded,
-              ),
+              icon: const Icon(Icons.refresh_rounded),
 
-              label:
-                  Text(
+              label: Text(
                 'Coba Lagi',
 
-                style:
-                    GoogleFonts.poppins(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -1347,15 +1056,12 @@ class PantunView extends GetView<PantunController> {
   // CAPITALIZE
   // ============================================================
 
-  String _capitalize(
-    String value,
-  ) {
+  String _capitalize(String value) {
     if (value.trim().isEmpty) {
       return '-';
     }
 
-    final String text =
-        value.trim();
+    final String text = value.trim();
 
     return '${text[0].toUpperCase()}'
         '${text.substring(1).toLowerCase()}';

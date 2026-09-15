@@ -11,8 +11,7 @@ class PantunController extends GetxController {
   // SERVICE
   // =====================================
 
-  final PantunService _pantunService =
-      Get.find<PantunService>();
+  final PantunService _pantunService = Get.find<PantunService>();
 
   // =====================================
   // DATA KATEGORI
@@ -24,14 +23,11 @@ class PantunController extends GetxController {
   // STATE
   // =====================================
 
-  final pantunList =
-      <PantunModel>[].obs;
+  final pantunList = <PantunModel>[].obs;
 
-  final isLoading =
-      false.obs;
+  final isLoading = false.obs;
 
-  final errorMessage =
-      ''.obs;
+  final errorMessage = ''.obs;
 
   // =====================================
   // INIT
@@ -41,21 +37,16 @@ class PantunController extends GetxController {
   void onInit() {
     super.onInit();
 
-    final arguments =
-        Get.arguments;
+    final arguments = Get.arguments;
 
     if (arguments is CategoryModel) {
-      category =
-          arguments;
+      category = arguments;
 
       loadPantun();
     } else {
-      errorMessage.value =
-          'Data kategori tidak ditemukan.';
+      errorMessage.value = 'Data kategori tidak ditemukan.';
 
-      debugPrint(
-        'ERROR ARGUMENT PANTUN: $arguments',
-      );
+      debugPrint('ERROR ARGUMENT PANTUN: $arguments');
     }
   }
 
@@ -65,40 +56,26 @@ class PantunController extends GetxController {
 
   Future<void> loadPantun() async {
     try {
-      isLoading.value =
-          true;
+      isLoading.value = true;
 
-      errorMessage.value =
-          '';
+      errorMessage.value = '';
 
-      final result =
-          await _pantunService
-              .getPantunByCategory(
-        category.id,
-      );
+      final result = await _pantunService.getPantunByCategory(category.id);
 
-      pantunList.assignAll(
-        result,
-      );
+      pantunList.assignAll(result);
 
-      debugPrint(
-        'Kategori: ${category.id}',
-      );
+      debugPrint('Kategori: ${category.id}');
 
       debugPrint(
         'Jumlah pantun: '
         '${pantunList.length}',
       );
     } catch (e) {
-      errorMessage.value =
-          'Gagal mengambil pantun.';
+      errorMessage.value = 'Gagal mengambil pantun.';
 
-      debugPrint(
-        'ERROR LOAD PANTUN: $e',
-      );
+      debugPrint('ERROR LOAD PANTUN: $e');
     } finally {
-      isLoading.value =
-          false;
+      isLoading.value = false;
     }
   }
 
@@ -114,15 +91,10 @@ class PantunController extends GetxController {
   // BUKA DETAIL PANTUN
   // =====================================
 
-  void openPantun(
-    PantunModel pantun,
-  ) {
+  void openPantun(PantunModel pantun) {
     Get.toNamed(
       Routes.pantunDetail,
-      arguments: {
-        'pantun': pantun,
-        'category': category,
-      },
+      arguments: {'pantun': pantun, 'category': category},
     );
   }
 }
