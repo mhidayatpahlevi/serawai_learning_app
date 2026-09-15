@@ -2056,8 +2056,8 @@ class LatihanController extends GetxController {
 
           child:
               ElevatedButton(
-            onPressed:
-                backToCategory,
+          
+onPressed: () => Get.offAllNamed(Routes.pantunDetail),
 
             style:
                 ElevatedButton.styleFrom(
